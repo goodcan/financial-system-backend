@@ -11,4 +11,3 @@ class DBCollectionsConfig:
         数据库集合配置
     """
     pass
-

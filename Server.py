@@ -15,18 +15,14 @@ from RequestAPI.RequestInit import RequestInit
 
 define('PORT', default=9000, help='Server port')
 
-
-
 if __name__ == '__main__':
     print 'Server start ...'
 
     options.parse_command_line()
 
+    # 初始化基础模块
     RequestInit.init()
 
     http_server = HTTPServer(Application(HandleList))
     http_server.listen(options.PORT)
     IOLoop.instance().start()
-
-
-

@@ -25,7 +25,7 @@ class Authentication(object):
         setToken = {'userId': userId}
 
         # 生成他token
-        s = Serializer(cls.token_secret_key,cls.token_expiration)
+        s = Serializer(cls.token_secret_key, cls.token_expiration)
         token = s.dumps(setToken)
 
         return token
