@@ -10,6 +10,29 @@ from base.db.DBOPS import DBOps
 from config.DBCollConfig import DBCollonfig
 
 
+class orderInitData(BaseRequest):
+    """
+        初始化订单数据
+    """
+
+    def handler_function(self):
+        classes = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderClass}
+        )['classes']
+        customers = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderCustomer}
+        )['customers']
+
+        self.result['result'] = {
+            'classes': [{'label': _, 'value': _} for _ in classes],
+            'customers': [{'label': _, 'value': _} for _ in customers]
+        }
+
+        return self.response_success()
+
+
 class addOrderClass(BaseRequest):
     """
         添加订单类目
@@ -18,7 +41,8 @@ class addOrderClass(BaseRequest):
     def handler_function(self):
         args = self.get_request_data()
 
-        newClasses = args['classes']
+        createUser = args.get('createUser', None)
+        newClasses = args.get('classes', None)
 
         oldClasses = DBOps.getOneDoc(
             DBCollonfig.options,
@@ -30,8 +54,10 @@ class addOrderClass(BaseRequest):
         for each in newClasses:
             if not oldClasses.has_key(each['name']):
                 oldClasses.update(
-                    {each['name']: {'createTime': each['time']}}
-                )
+                    {each['name']: {
+                        'createTime': each['time'],
+                        'createUser': createUser
+                    }})
             else:
                 error_list.append(each['name'])
 
@@ -55,7 +81,8 @@ class addOrderCustomer(BaseRequest):
     def handler_function(self):
         args = self.get_request_data()
 
-        newCustomers = args['customers']
+        createUser = args.get('createUser', None)
+        newCustomers = args.get('customers', None)
 
         oldCustomers = DBOps.getOneDoc(
             DBCollonfig.options,
@@ -67,8 +94,10 @@ class addOrderCustomer(BaseRequest):
         for each in newCustomers:
             if not oldCustomers.has_key(each['name']):
                 oldCustomers.update(
-                    {each['name']: {'createTime': each['time']}}
-                )
+                    {each['name']: {
+                        'createTime': each['time']},
+                        'createUser': createUser
+                    })
             else:
                 error_list.append(each['name'])
 
@@ -80,6 +109,52 @@ class addOrderCustomer(BaseRequest):
             DBCollonfig.options,
             {'_id': DBCollonfig.orderCustomer},
             {'$set': {'customers': oldCustomers}}
+        )
+
+        return self.response_success()
+
+class addOrderContact(BaseRequest):
+    """
+        添加订单客户
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        createUser = args.get('createUser', None)
+        tel = args.get('tel', None)
+        email = args.get('email', None)
+        qq = args.get('qq', None)
+        newContacts = args.get('contacts', None)
+
+        oldContacts = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderContact}
+        )['contacts']
+
+        print newContacts
+        error_list = []
+        for each in newContacts:
+            if not oldContacts.has_key(each['name']):
+                oldContacts.update(
+                    {each['name']: {
+                        'createTime': each['time']},
+                        'createUser': createUser,
+                        'tel': tel,
+                        'email': email,
+                        'qq': qq
+                    })
+            else:
+                error_list.append(each['name'])
+
+        if error_list:
+            msg = u','.join([_  for _ in error_list]) + u'已存在'
+            return self.response_failure(msg=msg)
+
+        DBOps.setOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderCustomer},
+            {'$set': {'contacts': oldContacts}}
         )
 
         return self.response_success()

@@ -37,7 +37,10 @@ class Authentication(object):
         """
 
         s = Serializer(cls.token_secret_key)
-        setToken, header = s.loads(token, return_header=True)
+        try:
+            setToken, header = s.loads(token, return_header=True)
+        except BaseException:
+            return False
 
         # token验证
         # TODO 后续后续添加时间认证

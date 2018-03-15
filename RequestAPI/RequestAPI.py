@@ -13,5 +13,7 @@ HandleList = [
     (r'/api/login', Account.Login),
     (r'/api/checkLogin', Account.checkLogin),
     (r'/api/addOrderClass', Order.addOrderClass),
-    (r'/api/addOrderCustomer', Order.addOrderCustomer)
+    (r'/api/addOrderCustomer', Order.addOrderCustomer),
+    (r'/api/orderInitData', Order.orderInitData),
+    (r'/api/addOrderContact', Order.addOrderContact)
 ]

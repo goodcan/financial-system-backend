@@ -16,4 +16,5 @@ class DBCollonfig:
     options = 'options'
 
     orderClass = 2001
-    orderCustomer = 2002
+    orderCustomer = 2001
+    orderContact = 2001
