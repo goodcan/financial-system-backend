@@ -54,15 +54,18 @@ class addOrderClass(BaseRequest):
         for each in newClasses:
             if not oldClasses.has_key(each['name']):
                 oldClasses.update(
-                    {each['name']: {
-                        'createTime': each['time'],
-                        'createUser': createUser
-                    }})
+                    {
+                        each['name']: {
+                            'createTime': each['time'],
+                            'createUser': createUser
+                        }
+                    }
+                )
             else:
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_  for _ in error_list]) + u'已存在'
+            msg = u','.join([_ for _ in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         DBOps.setOneDoc(
@@ -72,6 +75,7 @@ class addOrderClass(BaseRequest):
         )
 
         return self.response_success()
+
 
 class addOrderCustomer(BaseRequest):
     """
@@ -94,15 +98,18 @@ class addOrderCustomer(BaseRequest):
         for each in newCustomers:
             if not oldCustomers.has_key(each['name']):
                 oldCustomers.update(
-                    {each['name']: {
-                        'createTime': each['time']},
-                        'createUser': createUser
-                    })
+                    {
+                        each['name']: {
+                            'createTime': each['time'],
+                            'createUser': createUser
+                        },
+                    }
+                )
             else:
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_  for _ in error_list]) + u'已存在'
+            msg = u','.join([_ for _ in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         DBOps.setOneDoc(
@@ -112,6 +119,7 @@ class addOrderCustomer(BaseRequest):
         )
 
         return self.response_success()
+
 
 class addOrderContact(BaseRequest):
     """
@@ -137,18 +145,21 @@ class addOrderContact(BaseRequest):
         for each in newContacts:
             if not oldContacts.has_key(each['name']):
                 oldContacts.update(
-                    {each['name']: {
-                        'createTime': each['time']},
-                        'createUser': createUser,
-                        'tel': tel,
-                        'email': email,
-                        'qq': qq
-                    })
+                    {
+                        each['name']: {
+                            'createTime': each['time'],
+                            'createUser': createUser,
+                            'tel': tel,
+                            'email': email,
+                            'qq': qq
+                        }
+                    }
+                )
             else:
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_  for _ in error_list]) + u'已存在'
+            msg = u','.join([_ for _ in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         DBOps.setOneDoc(

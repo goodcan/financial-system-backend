@@ -20,14 +20,18 @@ class Register(BaseRequest):
     def handler_function(self):
         args = self.get_request_data()
         username = args.get('username', None)
-        password = args.get('username', None)
+        password1 = args.get('password1', None)
+        password2 = args.get('password2', None)
+
+        if password1 != password2:
+            return self.response_failure(username + u'两次密码不一致')
 
         user = DBOps.getOneDoc(DBCollonfig.users, {'username': username})
 
         if user:
             return self.response_failure(username + u'用户已存在')
 
-        self.createUser(username, password)
+        self.createUser(username, password1)
         self.response_success()
 
     def createUser(self, username, password):
