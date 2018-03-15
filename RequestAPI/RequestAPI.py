@@ -5,8 +5,10 @@
 # @File     : RequestAPI.py
 # @Function : 请求协议映射
 
-from core.account.Register import Register
+from core.account import Account
 
 HandleList = [
-    (r'/register', Register)
+    (r'/api/register', Account.Register),
+    (r'/api/login', Account.Login),
+    (r'/api/checkLogin', Account.checkLogin)
 ]

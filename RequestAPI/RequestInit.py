@@ -6,6 +6,7 @@
 # @Function : 服务初始化
 
 from base.db.DBManger import DBManager
+from base.db.DBOPS import DBOps
 
 
 class RequestInit(object):
@@ -16,3 +17,4 @@ class RequestInit(object):
     @classmethod
     def init(cls):
         DBManager.init()
+        DBOps.init()

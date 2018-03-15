@@ -16,12 +16,13 @@ class BaseRequest(RequestHandler):
         所有请求的基类
     """
 
-    result = {'status': 0, 'msg': None, 'result': None}
+    result = {'code': 0, 'msg': None, 'result': None}
 
     def post(self):
         verify = self.verifyUser()
         if not verify:
             self.response_failure()
+            self.result['code'] = 1001
         else:
             self.handler_function()
         return self.write(self.result)
@@ -33,9 +34,9 @@ class BaseRequest(RequestHandler):
         protocol = self.request.uri
 
         # 忽略token需求的请求
-        white_list = ['register', 'login']
+        white_list = ['register', 'login', 'checkLogin']
 
-        if protocol.split('/')[1] in white_list:
+        if protocol.split('/')[2] in white_list:
             return True
 
         token = self.request.headers.get('Authorization', None)
@@ -53,14 +54,14 @@ class BaseRequest(RequestHandler):
         """
             响应成功
         """
-        self.result['status'] = 1
+        self.result['code'] = 1
         self.result['msg'] = msg
 
     def response_failure(self, msg='failure'):
         """
             响应成功
         """
-        self.result['status'] = 0
+        self.result['code'] = 0
         self.result['msg'] = msg
         self.result['result'] = None
 

@@ -45,3 +45,17 @@ class Authentication(object):
             return True
         else:
             return False
+
+    @classmethod
+    def getVerifyToken(cls, token):
+        """
+            获得token内容信息
+        """
+
+        s = Serializer(cls.token_secret_key)
+        try:
+            setToken, header = s.loads(token, return_header=True)
+        except BaseException:
+            setToken, header = {}, None
+
+        return setToken, header

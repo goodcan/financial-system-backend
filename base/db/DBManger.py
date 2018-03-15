@@ -14,7 +14,7 @@ class DBManager(object):
     """
     HOST = '127.0.0.1'
     PORT = 27017
-    db = None
+    usersDb = None
 
     @classmethod
     def init(cls):
@@ -25,7 +25,7 @@ class DBManager(object):
         username = 'admin'
         password = 'szx0982'
 
-        cls.db = cls.connect_db(username, password)
+        cls.usersDb = cls.connect_db(username, password)
 
         print 'connect db success'
 
@@ -36,10 +36,10 @@ class DBManager(object):
         """
         client = MongoClient(cls.HOST, cls.PORT)
 
-        db_auth = client.szx_admin
-        db_auth.authenticate(username, password)
+        dbAuth = client.szx_admin
+        dbAuth.authenticate(username, password)
 
-        return db_auth
+        return client.szx_admin
 
 if __name__ == "__main__":
     DBManager.init()
