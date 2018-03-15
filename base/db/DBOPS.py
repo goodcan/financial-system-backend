@@ -13,11 +13,11 @@ class DBOps(object):
         数据想过操作
     """
 
-    usersDb = None
+    db = None
 
     @classmethod
     def init(cls):
-        cls.usersDb = DBManager.usersDb
+        cls.db = DBManager.db
 
     @classmethod
     def insertDoc(cls, table, doc):
@@ -25,14 +25,14 @@ class DBOps(object):
             插入文档
         """
 
-        getattr(cls, table + 'Db')[table].insert(doc)
+        cls.db[table].insert(doc)
 
     @classmethod
     def getDocNum(cls, table):
         """
             获得表总数
         """
-        return getattr(cls, table + 'Db')[table].find().count()
+        return cls.db[table].find().count()
 
     @classmethod
     def getOneDoc(cls, table, params):
@@ -40,4 +40,12 @@ class DBOps(object):
             获得一个文档
         """
 
-        return getattr(cls, table + 'Db')[table].find_one(params)
+        return cls.db[table].find_one(params)
+
+    @classmethod
+    def setOneDoc(cls, table, params, setParams):
+        """
+            获得一个文档
+        """
+
+        return cls.db[table].update(params, setParams)

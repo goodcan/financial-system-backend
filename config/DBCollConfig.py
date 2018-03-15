@@ -13,3 +13,7 @@ class DBCollonfig:
 
     startNum = 1000 # 起始用户id
     users = 'users'
+    options = 'options'
+
+    orderClass = 2001
+    orderCustomer = 2002

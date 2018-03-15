@@ -4,7 +4,7 @@
 # @Author   : cancan
 # @File     : BaseRequest.py
 # @Function : 基础请求
-
+import time
 from tornado.web import RequestHandler
 from tornado.escape import json_decode
 
@@ -70,6 +70,22 @@ class BaseRequest(RequestHandler):
             解析球球参数
         """
         return json_decode(self.request.body)
+
+    def time_conversion(self, obj, option):
+        """
+            时间类型转换
+        :param option:
+            1.字符转转时间戳
+            2.时间戳转字符串
+        """
+
+        # 字符转转时间戳
+        if option == 1:
+            return int(time.mktime(time.strptime(obj, '%Y-%m-%d %H:%M:%S')) * 100)
+
+        # 时间戳转字符串
+        elif option == 2:
+            return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(obj * 0.01))
 
     def handler_function(self):
         """

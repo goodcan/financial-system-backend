@@ -99,8 +99,8 @@ class checkLogin(BaseRequest):
                 return self.response_success()
             else:
                 self.result['result'] = {'userObj': None}
-                return self.response_failure('登录过期')
+                return self.response_failure(u'登录过期')
         else:
             self.result['result'] = {'userObj': None}
-            return self.response_failure('没有登录')
+            return self.response_failure(u'没有登录')
 

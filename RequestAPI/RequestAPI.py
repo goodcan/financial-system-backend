@@ -6,9 +6,12 @@
 # @Function : 请求协议映射
 
 from core.account import Account
+from core.order import Order
 
 HandleList = [
     (r'/api/register', Account.Register),
     (r'/api/login', Account.Login),
-    (r'/api/checkLogin', Account.checkLogin)
+    (r'/api/checkLogin', Account.checkLogin),
+    (r'/api/addOrderClass', Order.addOrderClass),
+    (r'/api/addOrderCustomer', Order.addOrderCustomer)
 ]

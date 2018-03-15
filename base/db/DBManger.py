@@ -14,7 +14,7 @@ class DBManager(object):
     """
     HOST = '127.0.0.1'
     PORT = 27017
-    usersDb = None
+    db = None
 
     @classmethod
     def init(cls):
@@ -25,7 +25,7 @@ class DBManager(object):
         username = 'admin'
         password = 'szx0982'
 
-        cls.usersDb = cls.connect_db(username, password)
+        cls.db = cls.connect_db(username, password)
 
         print 'connect db success'
 
