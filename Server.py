@@ -16,9 +16,9 @@ from RequestAPI.RequestInit import RequestInit
 define('PORT', default=9000, help='Server port')
 
 if __name__ == '__main__':
-    print 'Server start ...'
-
     options.parse_command_line()
+
+    print 'Server start listen ' + str(options.PORT)
 
     # 初始化基础模块
     RequestInit.init()

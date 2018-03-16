@@ -34,7 +34,7 @@ class BaseRequest(RequestHandler):
         protocol = self.request.uri
 
         # 忽略token需求的请求
-        white_list = ['register', 'login', 'checkLogin']
+        white_list = ['register', 'login', 'checkLogin', 'registerInitData']
 
         if protocol.split('/')[2] in white_list:
             return True

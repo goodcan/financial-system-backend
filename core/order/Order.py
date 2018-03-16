@@ -12,7 +12,30 @@ from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
 
 
-class orderList(BaseRequest):
+class DelOrder(BaseRequest):
+    """
+        删除订单
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        DBOps.setOneDoc(
+            DBCollonfig.users,
+            {'_id': args['userId']},
+            {
+                '$pull': {
+                    'orders': {
+                        'orderId': args['orderId']
+                    }
+                }
+            }
+        )
+
+        self.response_success()
+
+
+class OrderList(BaseRequest):
     """
         订单列表
     """
@@ -33,7 +56,8 @@ class orderList(BaseRequest):
         )
         return self.response_success()
 
-class createOrder(BaseRequest):
+
+class CreateOrder(BaseRequest):
     """
         创建订单
     """
@@ -69,7 +93,7 @@ class createOrder(BaseRequest):
         self.response_success()
 
 
-class orderInitData(BaseRequest):
+class OrderInitData(BaseRequest):
     """
         初始化订单数据
     """
@@ -102,7 +126,7 @@ class orderInitData(BaseRequest):
         return self.response_success()
 
 
-class addOrderClass(BaseRequest):
+class AddOrderClass(BaseRequest):
     """
         添加订单类目
     """
@@ -148,7 +172,7 @@ class addOrderClass(BaseRequest):
         return self.response_success()
 
 
-class addOrderCustomer(BaseRequest):
+class AddOrderCustomer(BaseRequest):
     """
         添加订单客户
     """
@@ -194,7 +218,7 @@ class addOrderCustomer(BaseRequest):
         return self.response_success()
 
 
-class addOrderContact(BaseRequest):
+class AddOrderContact(BaseRequest):
     """
         添加订单客户
     """
@@ -245,7 +269,8 @@ class addOrderContact(BaseRequest):
 
         return self.response_success()
 
-class addOrderDpt(BaseRequest):
+
+class AddOrderDpt(BaseRequest):
     """
         添加订单部门选项
     """

@@ -12,11 +12,13 @@ HandleList = [
     (r'/api/register', Account.Register),
     (r'/api/login', Account.Login),
     (r'/api/checkLogin', Account.checkLogin),
-    (r'/api/addOrderClass', Order.addOrderClass),
-    (r'/api/addOrderCustomer', Order.addOrderCustomer),
-    (r'/api/addOrderDpt', Order.addOrderDpt),
-    (r'/api/orderInitData', Order.orderInitData),
-    (r'/api/addOrderContact', Order.addOrderContact),
-    (r'/api/createOrder', Order.createOrder),
-    (r'/api/orderList', Order.orderList)
+    (r'/api/addOrderClass', Order.AddOrderClass),
+    (r'/api/addOrderCustomer', Order.AddOrderCustomer),
+    (r'/api/addOrderDpt', Order.AddOrderDpt),
+    (r'/api/orderInitData', Order.OrderInitData),
+    (r'/api/addOrderContact', Order.AddOrderContact),
+    (r'/api/createOrder', Order.CreateOrder),
+    (r'/api/orderList', Order.OrderList),
+    (r'/api/delOrder', Order.DelOrder),
+    (r'/api/registerInitData', Account.RegisterIinitData)
 ]

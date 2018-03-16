@@ -12,6 +12,27 @@ from base.encrypt.Encrypt import Encrypt
 from config.DBCollConfig import DBCollonfig
 
 
+class RegisterIinitData(BaseRequest):
+    """
+        注册数据初始化
+    """
+
+    def handler_function(self):
+        departments = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderOption},
+            {'departments': 1}
+        )['departments']
+
+        self.result['result'] = {
+            'departments': [
+                {'label': _['name'], 'value': _['name']} for _ in departments
+            ]
+        }
+
+        return self.response_success()
+
+
 class Register(BaseRequest):
     """
         注册
@@ -22,6 +43,7 @@ class Register(BaseRequest):
         username = args.get('username', None)
         password1 = args.get('password1', None)
         password2 = args.get('password2', None)
+        userType = args.get('userType', None)
 
         if password1 != password2:
             return self.response_failure(username + u'两次密码不一致')
@@ -31,10 +53,10 @@ class Register(BaseRequest):
         if user:
             return self.response_failure(username + u'用户已存在')
 
-        self.createUser(username, password1)
+        self.createUser(username, password1, userType)
         self.response_success()
 
-    def createUser(self, username, password):
+    def createUser(self, username, password, userType):
         """
             创建账户
         """
@@ -48,7 +70,7 @@ class Register(BaseRequest):
             'username': username,
             'password': Encrypt.password_encrypt(password),
             'level': 1,
-            'userType': 0,
+            'userType': userType,
             'orders': []
         }
 
