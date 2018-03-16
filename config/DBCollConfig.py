@@ -15,6 +15,7 @@ class DBCollonfig:
     users = 'users'
     options = 'options'
 
+    orderOption = 2001
     orderClass = 2001
     orderCustomer = 2001
     orderContact = 2001

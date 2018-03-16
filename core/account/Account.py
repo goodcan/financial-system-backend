@@ -7,7 +7,7 @@
 
 from RequestAPI.BaseRequest import BaseRequest
 from base.authentication.Authentication import Authentication
-from base.db.DBOPS import DBOps
+from base.db.DBOps import DBOps
 from base.encrypt.Encrypt import Encrypt
 from config.DBCollConfig import DBCollonfig
 
@@ -40,20 +40,27 @@ class Register(BaseRequest):
         """
         userNum = DBOps.getDocNum(DBCollonfig.users)
 
-        userId =  DBCollonfig.startNum + userNum + 1
+        userId = DBCollonfig.startNum + userNum + 1
 
-        item = {
+        # 初始化用户数据
+        user = {
             '_id': userId,
             'username': username,
             'password': Encrypt.password_encrypt(password),
             'level': 1,
-            'type': 0
+            'userType': 0,
+            'orders': []
         }
 
-        DBOps.insertDoc(DBCollonfig.users, item)
+        DBOps.insertDoc(DBCollonfig.users, user)
 
-        self.result['result'] =  {
-            'userObj': item,
+        self.result['result'] = {
+            'userObj': {
+                'userId': user['_id'],
+                'username': user['username'],
+                'level': user['level'],
+                'userType': user['userType']
+            },
             'token': Authentication.generateToken(userId)
         }
 
@@ -77,12 +84,17 @@ class Login(BaseRequest):
         if user['password'] != Encrypt.password_encrypt(password):
             return self.response_failure(username + u'用户密码错误')
 
-        del user['password']
         self.result['result'] = {
-            'userObj': user,
+            'userObj': {
+                'userId': user['_id'],
+                'username': user['username'],
+                'level': user['level'],
+                'userType': user['userType']
+            },
             'token': Authentication.generateToken(user['_id'])
         }
         return self.response_success()
+
 
 class checkLogin(BaseRequest):
     """
@@ -98,8 +110,14 @@ class checkLogin(BaseRequest):
             if setToken.has_key('userId'):
                 userId = setToken['userId']
                 user = DBOps.getOneDoc(DBCollonfig.users, {'_id': userId})
-                del user['password']
-                self.result['result'] = {'userObj': user}
+                self.result['result'] = {
+                    'userObj': {
+                        'userId': user['_id'],
+                        'username': user['username'],
+                        'level': user['level'],
+                        'userType': user['userType']
+                    }
+                }
                 return self.response_success()
             else:
                 self.result['result'] = {'userObj': None}
@@ -107,4 +125,3 @@ class checkLogin(BaseRequest):
         else:
             self.result['result'] = {'userObj': None}
             return self.response_failure(u'没有登录')
-

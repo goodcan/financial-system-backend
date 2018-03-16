@@ -27,7 +27,7 @@ class DBManager(object):
 
         cls.db = cls.connect_db(username, password)
 
-        print 'connect db success'
+        print 'DBManager init success'
 
     @classmethod
     def connect_db(cls, username, password):

@@ -5,9 +5,68 @@
 # @File     : Order.py
 # @Function : 订单相关操作
 
+from datetime import datetime
+
 from RequestAPI.BaseRequest import BaseRequest
-from base.db.DBOPS import DBOps
+from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
+
+
+class orderList(BaseRequest):
+    """
+        订单列表
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        orders = DBOps.getOneDoc(
+            DBCollonfig.users,
+            {'_id': args['userId']},
+            {'orders': 1}
+        )['orders']
+
+        self.result['result'] = sorted(
+            orders,
+            key=lambda x: self.time_conversion(x['createTime'], 1),
+            reverse=True
+        )
+        return self.response_success()
+
+class createOrder(BaseRequest):
+    """
+        创建订单
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        now = datetime.now()
+        orderId = str(args['userId']) + \
+                  '{0:02}'.format(args['userType']) + \
+                  now.strftime('%Y%m%d%H%M%S')
+        order = {
+            'orderId': orderId,
+            'userId': args['userId'],
+            'createUser': args['createUser'],
+            'department': args['department'],
+            'className': args['className'],
+            'customerName': args['customerName'],
+            'contactName': args['contactName'],
+            'expectDate': args['expectDate'],
+            'price': args['price'],
+            'desc': args['desc'],
+            'createTime': now.strftime('%Y-%m-%d %H:%M:%S'),
+            'status': 1
+        }
+
+        DBOps.setOneDoc(
+            DBCollonfig.users,
+            {'_id': args['userId']},
+            {'$push': {'orders': order}}
+        )
+
+        self.response_success()
 
 
 class orderInitData(BaseRequest):
@@ -16,18 +75,28 @@ class orderInitData(BaseRequest):
     """
 
     def handler_function(self):
-        classes = DBOps.getOneDoc(
+        orderOptions = DBOps.getOneDoc(
             DBCollonfig.options,
-            {'_id': DBCollonfig.orderClass}
-        )['classes']
-        customers = DBOps.getOneDoc(
-            DBCollonfig.options,
-            {'_id': DBCollonfig.orderCustomer}
-        )['customers']
+            {'_id': DBCollonfig.orderOption}
+        )
+        classes = orderOptions['classes']
+        customers = orderOptions['customers']
+        contacts = orderOptions['contacts']
+        departments = orderOptions['departments']
 
         self.result['result'] = {
-            'classes': [{'label': _, 'value': _} for _ in classes],
-            'customers': [{'label': _, 'value': _} for _ in customers]
+            'classes': [
+                {'label': _['name'], 'value': _['name']} for _ in classes
+            ],
+            'customers': [
+                {'label': _['name'], 'value': _['name']} for _ in customers
+            ],
+            'contacts': [
+                {'label': _['name'], 'value': _['name']} for _ in contacts
+            ],
+            'departments': [
+                {'label': _['name'], 'value': _['name']} for _ in departments
+            ]
         }
 
         return self.response_success()
@@ -44,35 +113,37 @@ class addOrderClass(BaseRequest):
         createUser = args.get('createUser', None)
         newClasses = args.get('classes', None)
 
-        oldClasses = DBOps.getOneDoc(
-            DBCollonfig.options,
-            {'_id': DBCollonfig.orderClass}
-        )['classes']
-
-        print newClasses
         error_list = []
         for each in newClasses:
-            if not oldClasses.has_key(each['name']):
-                oldClasses.update(
-                    {
-                        each['name']: {
-                            'createTime': each['time'],
-                            'createUser': createUser
-                        }
-                    }
-                )
-            else:
+            isExist = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderOption,
+                    'classes.name': each['name']
+                }
+            )
+            if isExist:
                 error_list.append(each['name'])
 
         if error_list:
             msg = u','.join([_ for _ in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
-        DBOps.setOneDoc(
-            DBCollonfig.options,
-            {'_id': DBCollonfig.orderClass},
-            {'$set': {'classes': oldClasses}}
-        )
+        for each in newClasses:
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {'_id': DBCollonfig.orderOption},
+                {
+                    '$push': {
+                        'classes': {
+                            'name': each['name'],
+                            'createTime': self.time_conversion(
+                                each['time'], 2),
+                            'createUser': createUser
+                        }
+                    }
+                }
+            )
 
         return self.response_success()
 
@@ -88,35 +159,37 @@ class addOrderCustomer(BaseRequest):
         createUser = args.get('createUser', None)
         newCustomers = args.get('customers', None)
 
-        oldCustomers = DBOps.getOneDoc(
-            DBCollonfig.options,
-            {'_id': DBCollonfig.orderCustomer}
-        )['customers']
-
-        print newCustomers
         error_list = []
         for each in newCustomers:
-            if not oldCustomers.has_key(each['name']):
-                oldCustomers.update(
-                    {
-                        each['name']: {
-                            'createTime': each['time'],
-                            'createUser': createUser
-                        },
-                    }
-                )
-            else:
+            isExist = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderOption,
+                    'customers.name': each['name']
+                }
+            )
+            if isExist:
                 error_list.append(each['name'])
 
         if error_list:
             msg = u','.join([_ for _ in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
-        DBOps.setOneDoc(
-            DBCollonfig.options,
-            {'_id': DBCollonfig.orderCustomer},
-            {'$set': {'customers': oldCustomers}}
-        )
+        for each in newCustomers:
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {'_id': DBCollonfig.orderOption},
+                {
+                    '$push': {
+                        'customers': {
+                            'name': each['name'],
+                            'createTime': self.time_conversion(
+                                each['time'], 2),
+                            'createUser': createUser
+                        }
+                    }
+                }
+            )
 
         return self.response_success()
 
@@ -135,37 +208,84 @@ class addOrderContact(BaseRequest):
         qq = args.get('qq', None)
         newContacts = args.get('contacts', None)
 
-        oldContacts = DBOps.getOneDoc(
-            DBCollonfig.options,
-            {'_id': DBCollonfig.orderContact}
-        )['contacts']
-
-        print newContacts
         error_list = []
         for each in newContacts:
-            if not oldContacts.has_key(each['name']):
-                oldContacts.update(
-                    {
-                        each['name']: {
-                            'createTime': each['time'],
-                            'createUser': createUser,
-                            'tel': tel,
-                            'email': email,
-                            'qq': qq
-                        }
-                    }
-                )
-            else:
+            isExist = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderOption,
+                    'contacts.name': each['name']
+                }
+            )
+            if isExist:
                 error_list.append(each['name'])
 
         if error_list:
             msg = u','.join([_ for _ in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
-        DBOps.setOneDoc(
-            DBCollonfig.options,
-            {'_id': DBCollonfig.orderCustomer},
-            {'$set': {'contacts': oldContacts}}
-        )
+        for each in newContacts:
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {'_id': DBCollonfig.orderOption},
+                {
+                    '$push': {
+                        'contacts': {
+                            'name': each['name'],
+                            'createTime': self.time_conversion(
+                                each['time'], 2),
+                            'createUser': createUser,
+                            'tel': tel,
+                            'email': email,
+                            'qq': qq
+                        }
+                    }
+                }
+            )
+
+        return self.response_success()
+
+class addOrderDpt(BaseRequest):
+    """
+        添加订单部门选项
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        createUser = args.get('createUser', None)
+        newDepartments = args.get('departments', None)
+
+        error_list = []
+        for each in newDepartments:
+            isExist = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderOption,
+                    'departments.name': each['name']
+                }
+            )
+            if isExist:
+                error_list.append(each['name'])
+
+        if error_list:
+            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            return self.response_failure(msg=msg)
+
+        for each in newDepartments:
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {'_id': DBCollonfig.orderOption},
+                {
+                    '$push': {
+                        'departments': {
+                            'name': each['name'],
+                            'createTime': self.time_conversion(
+                                each['time'], 2),
+                            'createUser': createUser,
+                        }
+                    }
+                }
+            )
 
         return self.response_success()

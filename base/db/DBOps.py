@@ -18,6 +18,7 @@ class DBOps(object):
     @classmethod
     def init(cls):
         cls.db = DBManager.db
+        print 'DBOps init success'
 
     @classmethod
     def insertDoc(cls, table, doc):
@@ -35,12 +36,12 @@ class DBOps(object):
         return cls.db[table].find().count()
 
     @classmethod
-    def getOneDoc(cls, table, params):
+    def getOneDoc(cls, table, params, getParams=None):
         """
             获得一个文档
         """
 
-        return cls.db[table].find_one(params)
+        return cls.db[table].find_one(params, getParams)
 
     @classmethod
     def setOneDoc(cls, table, params, setParams):

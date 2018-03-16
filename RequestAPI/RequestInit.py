@@ -6,7 +6,7 @@
 # @Function : 服务初始化
 
 from base.db.DBManger import DBManager
-from base.db.DBOPS import DBOps
+from base.db.DBOps import DBOps
 
 
 class RequestInit(object):
