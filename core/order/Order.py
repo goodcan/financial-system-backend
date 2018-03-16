@@ -66,9 +66,7 @@ class CreateOrder(BaseRequest):
         args = self.get_request_data()
 
         now = datetime.now()
-        orderId = str(args['userId']) + \
-                  '{0:02}'.format(args['userType']) + \
-                  now.strftime('%Y%m%d%H%M%S')
+        orderId = str(args['userId']) + now.strftime('%Y%m%d%H%M%S')
         order = {
             'orderId': orderId,
             'userId': args['userId'],

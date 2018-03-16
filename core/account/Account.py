@@ -10,6 +10,7 @@ from base.authentication.Authentication import Authentication
 from base.db.DBOps import DBOps
 from base.encrypt.Encrypt import Encrypt
 from config.DBCollConfig import DBCollonfig
+from config.UserConfig import UserConfig
 
 
 class RegisterIinitData(BaseRequest):
@@ -69,7 +70,7 @@ class Register(BaseRequest):
             '_id': userId,
             'username': username,
             'password': Encrypt.password_encrypt(password),
-            'level': 1,
+            'permissions': UserConfig.permissions,
             'userType': userType,
             'orders': []
         }
@@ -80,7 +81,7 @@ class Register(BaseRequest):
             'userObj': {
                 'userId': user['_id'],
                 'username': user['username'],
-                'level': user['level'],
+                'permissions': user['permissions'],
                 'userType': user['userType']
             },
             'token': Authentication.generateToken(userId)
@@ -110,7 +111,7 @@ class Login(BaseRequest):
             'userObj': {
                 'userId': user['_id'],
                 'username': user['username'],
-                'level': user['level'],
+                'permissions': user['permissions'],
                 'userType': user['userType']
             },
             'token': Authentication.generateToken(user['_id'])
@@ -136,7 +137,7 @@ class checkLogin(BaseRequest):
                     'userObj': {
                         'userId': user['_id'],
                         'username': user['username'],
-                        'level': user['level'],
+                        'permissions': user['permissions'],
                         'userType': user['userType']
                     }
                 }
