@@ -44,7 +44,10 @@ class Register(BaseRequest):
         username = args.get('username', None)
         password1 = args.get('password1', None)
         password2 = args.get('password2', None)
-        userType = args.get('userType', None)
+        key = args.get('registerKey', None)
+
+        if key != 'szx2018':
+            return self.response_failure(username + u'验证码错误')
 
         if password1 != password2:
             return self.response_failure(username + u'两次密码不一致')
@@ -54,10 +57,10 @@ class Register(BaseRequest):
         if user:
             return self.response_failure(username + u'用户已存在')
 
-        self.createUser(username, password1, userType)
+        self.createUser(username, password1)
         self.response_success()
 
-    def createUser(self, username, password, userType):
+    def createUser(self, username, password):
         """
             创建账户
         """
@@ -71,7 +74,7 @@ class Register(BaseRequest):
             'username': username,
             'password': Encrypt.password_encrypt(password),
             'permissions': UserConfig.permissions,
-            'userType': userType,
+            'userType': None,
             'orders': []
         }
 
