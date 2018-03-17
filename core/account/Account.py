@@ -26,13 +26,51 @@ def ResUserData(user):
     }
     return res
 
+
+class EditUserInitData(BaseRequest):
+    """
+        初始化用户编辑数据
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        userId = args['userId']
+
+        user = DBOps.getOneDoc(
+            DBCollonfig.users,
+            {'_id': userId},
+            {'orders': 0}
+        )
+
+        departments = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderOption},
+            {'departments': 1}
+        )['departments']
+
+        user['setPermissions'] = [
+            k for k, v in user['permissions'].iteritems() if v == 1
+        ]
+
+        self.result['result'] = {
+            'user': user,
+            'departments': [
+                {'label': _['name'], 'value': _['name']} for _ in departments
+            ],
+            'permissions': [
+                {'key': k, 'label': v} for k, v in UserConfig.permissions.iteritems()
+            ],
+        }
+        self.response_success()
+
+
 class UserList(BaseRequest):
     """
         用户列表
     """
 
     def handler_function(self):
-
         total = DBOps.getSomeDoc(DBCollonfig.users, {}, {'orders': 0})
 
         userList = []
@@ -46,6 +84,7 @@ class UserList(BaseRequest):
             reverse=True
         )
         return self.response_success()
+
 
 class RegisterIinitData(BaseRequest):
     """
@@ -107,7 +146,7 @@ class Register(BaseRequest):
             '_id': userId,
             'username': username,
             'password': Encrypt.password_encrypt(password),
-            'permissions': UserConfig.permissions,
+            'permissions': {_: 0 for _ in UserConfig.permissions},
             'createTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'department': '',
