@@ -21,22 +21,20 @@ class EditOrderStatus(BaseRequest):
         args = self.get_request_data()
 
         setStatus = args.get('status', None)
-        userId = args.get('userId', None)
         orderId = args.get('orderId', None)
 
         nowStatus = DBOps.getOneDoc(
-            DBCollonfig.users,
-            {'_id': userId, 'orders.orderId': orderId},
-            {'orders..$': 1}
-        )['orders'][0]['status']
+            DBCollonfig.orders,
+            {'_id': orderId}
+        )['status']
 
         if nowStatus == setStatus:
             return self.response_failure(msg='订单状态已被修改！')
 
         DBOps.setOneDoc(
-            DBCollonfig.users,
-            {'_id': userId, 'orders.orderId': orderId},
-            {'$set': {'orders.$.status': setStatus}}
+            DBCollonfig.orders,
+            {'_id': orderId},
+            {'$set': {'status': setStatus}}
         )
 
         return self.response_success(msg='订单状态修改成功！')
@@ -50,17 +48,7 @@ class DelOrder(BaseRequest):
     def handler_function(self):
         args = self.get_request_data()
 
-        DBOps.setOneDoc(
-            DBCollonfig.users,
-            {'_id': args['userId']},
-            {
-                '$pull': {
-                    'orders': {
-                        'orderId': args['orderId']
-                    }
-                }
-            }
-        )
+        DBOps.removeDoc(DBCollonfig.orders, {'_id': args['orderId']})
 
         self.response_success()
 
@@ -71,21 +59,51 @@ class OrderList(BaseRequest):
     """
 
     def handler_function(self):
+        args = self.get_request_data()
+
         userId = self.getUserIdByToken()
 
-        orders = DBOps.getOneDoc(
-            DBCollonfig.users,
-            {'_id': userId},
-            {'orders': 1}
-        )['orders']
+        if args['orderListType'] == 'self':
+            self.result['result'] = self.getSelfOrderList(userId)
+        elif args['orderListType'] == 'department':
+            department = DBOps.getOneDoc(
+                DBCollonfig.users,
+                {'_id': userId},
+                {'department': 1}
+            )['department']
+            self.result['result'] = self.getDptOrderList(department)
 
-        self.result['result'] = sorted(
+        return self.response_success()
+
+    def getDptOrderList(self, department):
+        """
+            获得部门的订单列表
+        """
+        orders = DBOps.getSomeDoc(
+            DBCollonfig.orders,
+            {'department': department}
+        )
+
+        return self.createResData(orders)
+
+    def getSelfOrderList(self, userId):
+        """
+            获得紫的订单列表
+        """
+
+        orders = DBOps.getSomeDoc(DBCollonfig.orders, {'userId': userId})
+
+        return self.createResData(orders)
+
+    def createResData(self, orders):
+        """
+            生成返回数据
+        """
+        return sorted(
             orders,
             key=lambda x: self.time_conversion(x['createTime'], 1),
             reverse=True
         )
-        return self.response_success()
-
 
 class CreateOrder(BaseRequest):
     """
@@ -98,6 +116,7 @@ class CreateOrder(BaseRequest):
         now = datetime.now()
         orderId = str(args['userId']) + now.strftime('%Y%m%d%H%M%S')
         order = {
+            '_id': orderId,
             'orderId': orderId,
             'userId': args['userId'],
             'createUser': args['createUser'],
@@ -112,11 +131,7 @@ class CreateOrder(BaseRequest):
             'status': 1
         }
 
-        DBOps.setOneDoc(
-            DBCollonfig.users,
-            {'_id': args['userId']},
-            {'$push': {'orders': order}}
-        )
+        DBOps.insertDoc(DBCollonfig.orders, order)
 
         self.response_success()
 

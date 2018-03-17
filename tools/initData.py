@@ -7,15 +7,46 @@
 
 from base.db.DBManger import DBManager
 
-DBManager.init()
 
-db = DBManager.db
+def clearUserData():
+    DBManager.init()
 
-total = db['users'].find()
+    db = DBManager.db
 
-for each in total:
-    del each['order']
-    each.update({
-        'orders': []
-    })
-    db['users'].update({'_id': each['_id']}, each)
+    total = db['users'].find()
+
+    for each in total:
+        del each['order']
+        each.update({
+            'orders': []
+        })
+        db['users'].update({'_id': each['_id']}, each)
+
+
+def moveUserOrders():
+    DBManager.init()
+
+    db = DBManager.db
+
+    total = db['users'].find()
+
+    for each in total:
+        for order in each['orders']:
+            order.update({'_id': order['orderId']})
+            db['orders'].insert(order)
+
+
+def removeUserOrders():
+    DBManager.init()
+
+    db = DBManager.db
+
+    total = db['users'].find()
+
+    for each in total:
+        del each['orders']
+        db['users'].update({'_id': each['_id']}, each)
+
+
+if __name__ == "__main__":
+    removeUserOrders()

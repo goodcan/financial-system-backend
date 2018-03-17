@@ -29,6 +29,14 @@ class DBOps(object):
         cls.db[table].insert(doc)
 
     @classmethod
+    def removeDoc(cls, table, params):
+        """
+            插入文档
+        """
+
+        cls.db[table].insert(params)
+
+    @classmethod
     def getDocNum(cls, table):
         """
             获得表总数

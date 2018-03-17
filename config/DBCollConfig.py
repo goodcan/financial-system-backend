@@ -14,6 +14,7 @@ class DBCollonfig:
     startNum = 1000 # 起始用户id
     users = 'users'
     options = 'options'
+    orders = 'orders'
 
     orderOption = 2001
     orderClass = 2001

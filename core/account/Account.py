@@ -187,7 +187,6 @@ class Register(BaseRequest):
             'createTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'department': '',
-            'orders': [],
             'tel': '',
             'email': '',
             'qq': ''
