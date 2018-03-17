@@ -4,6 +4,7 @@
 # @Author   : cancan
 # @File     : Account.py
 # @Function : 注册
+from datetime import datetime
 
 from RequestAPI.BaseRequest import BaseRequest
 from base.authentication.Authentication import Authentication
@@ -11,6 +12,19 @@ from base.db.DBOps import DBOps
 from base.encrypt.Encrypt import Encrypt
 from config.DBCollConfig import DBCollonfig
 from config.UserConfig import UserConfig
+
+
+def ResUserData(user):
+    """
+        返回前端的信息
+    """
+    res = {
+        'userId': user['_id'],
+        'username': user['username'],
+        'permissions': user['permissions'],
+        'department': user['department']
+    }
+    return res
 
 
 class RegisterIinitData(BaseRequest):
@@ -74,19 +88,19 @@ class Register(BaseRequest):
             'username': username,
             'password': Encrypt.password_encrypt(password),
             'permissions': UserConfig.permissions,
-            'userType': None,
-            'orders': []
+            'createTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'lastLogin': '',
+            'department': '',
+            'orders': [],
+            'tel': '',
+            'email': '',
+            'qq': ''
         }
 
         DBOps.insertDoc(DBCollonfig.users, user)
 
         self.result['result'] = {
-            'userObj': {
-                'userId': user['_id'],
-                'username': user['username'],
-                'permissions': user['permissions'],
-                'userType': user['userType']
-            },
+            'userObj': ResUserData(user),
             'token': Authentication.generateToken(userId)
         }
 
@@ -110,15 +124,17 @@ class Login(BaseRequest):
         if user['password'] != Encrypt.password_encrypt(password):
             return self.response_failure(username + u'用户密码错误')
 
+        DBOps.setOneDoc(
+            DBCollonfig.users,
+            {'_id': user['_id']},
+            {'$set': {'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}}
+        )
+
         self.result['result'] = {
-            'userObj': {
-                'userId': user['_id'],
-                'username': user['username'],
-                'permissions': user['permissions'],
-                'userType': user['userType']
-            },
+            'userObj': ResUserData(user),
             'token': Authentication.generateToken(user['_id'])
         }
+
         return self.response_success()
 
 
@@ -136,14 +152,17 @@ class checkLogin(BaseRequest):
             if setToken.has_key('userId'):
                 userId = setToken['userId']
                 user = DBOps.getOneDoc(DBCollonfig.users, {'_id': userId})
+
+                DBOps.setOneDoc(
+                    DBCollonfig.users,
+                    {'_id': user['_id']},
+                    {'$set': {'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}}
+                )
+
                 self.result['result'] = {
-                    'userObj': {
-                        'userId': user['_id'],
-                        'username': user['username'],
-                        'permissions': user['permissions'],
-                        'userType': user['userType']
-                    }
+                    'userObj': ResUserData(user)
                 }
+
                 return self.response_success()
             else:
                 self.result['result'] = {'userObj': None}

@@ -12,6 +12,36 @@ from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
 
 
+class EditOrderStatus(BaseRequest):
+    """
+        编辑订单状态
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        setStatus = args.get('status', None)
+        userId = args.get('userId', None)
+        orderId = args.get('orderId', None)
+
+        nowStatus = DBOps.getOneDoc(
+            DBCollonfig.users,
+            {'_id': userId, 'orders.orderId': orderId},
+            {'orders..$': 1}
+        )['orders'][0]['status']
+
+        if nowStatus == setStatus:
+            return self.response_failure(msg='订单状态已被修改！')
+
+        DBOps.setOneDoc(
+            DBCollonfig.users,
+            {'_id': userId, 'orders.orderId': orderId},
+            {'$set': {'orders.$.status': setStatus}}
+        )
+
+        return self.response_success(msg='订单状态修改成功！')
+
+
 class DelOrder(BaseRequest):
     """
         删除订单

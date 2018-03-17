@@ -20,5 +20,6 @@ HandleList = [
     (r'/api/createOrder', Order.CreateOrder),
     (r'/api/orderList', Order.OrderList),
     (r'/api/delOrder', Order.DelOrder),
-    (r'/api/registerInitData', Account.RegisterIinitData)
+    (r'/api/registerInitData', Account.RegisterIinitData),
+    (r'/api/editOrderStatus', Order.EditOrderStatus)
 ]
