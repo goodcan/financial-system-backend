@@ -34,7 +34,7 @@ class DBOps(object):
             插入文档
         """
 
-        cls.db[table].insert(params)
+        cls.db[table].remove(params)
 
     @classmethod
     def getDocNum(cls, table):
