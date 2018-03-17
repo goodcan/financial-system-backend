@@ -50,6 +50,14 @@ class BaseRequest(RequestHandler):
         else:
             return False
 
+    def getUserIdByToken(self):
+        """
+            根据token获得用户ID
+        """
+        token = self.request.headers.get('Authorization', None)
+        setToken, header = Authentication.getVerifyToken(token)
+        return setToken['userId']
+
     def response_success(self, msg='success'):
         """
             响应成功

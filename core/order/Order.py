@@ -71,11 +71,11 @@ class OrderList(BaseRequest):
     """
 
     def handler_function(self):
-        args = self.get_request_data()
+        userId = self.getUserIdByToken()
 
         orders = DBOps.getOneDoc(
             DBCollonfig.users,
-            {'_id': args['userId']},
+            {'_id': userId},
             {'orders': 1}
         )['orders']
 
