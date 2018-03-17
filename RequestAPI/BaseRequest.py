@@ -89,11 +89,21 @@ class BaseRequest(RequestHandler):
 
         # 字符转转时间戳
         if option == 1:
-            return int(time.mktime(time.strptime(obj, '%Y-%m-%d %H:%M:%S')) * 100)
+            return int(time.mktime(time.strptime(obj,'%Y-%m-%d %H:%M:%S'))*100)
 
         # 时间戳转字符串
         elif option == 2:
-            return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(obj * 0.01))
+            return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(obj*0.01))
+
+    def orderListByTime(self, data, reverse=True):
+        """
+            生成返回数据
+        """
+        return sorted(
+            data,
+            key=lambda x: self.time_conversion(x['createTime'], 1),
+            reverse=reverse
+        )
 
     def handler_function(self):
         """

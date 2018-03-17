@@ -115,11 +115,7 @@ class UserList(BaseRequest):
             user.update({'userId': user['_id']})
             userList.append(user)
 
-        self.result['result'] = sorted(
-            userList,
-            key=lambda x: self.time_conversion(x['createTime'], 1),
-            reverse=True
-        )
+        self.result['result'] = self.orderListByTime(userList, reverse=False)
         return self.response_success()
 
 

@@ -25,4 +25,6 @@ HandleList = [
     (r'/api/userList', Account.UserList),
     (r'/api/editUserInitData', Account.EditUserInitData),
     (r'/api/editUser', Account.EditUser),
+    (r'/api/orderOptionInitData', Order.OrderOptionInitData),
+    (r'/api/delOrderOption', Order.DelOrderOption),
 ]

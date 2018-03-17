@@ -84,7 +84,7 @@ class OrderList(BaseRequest):
             {'department': department}
         )
 
-        return self.createResData(orders)
+        return self.orderListByTime(orders)
 
     def getSelfOrderList(self, userId):
         """
@@ -93,17 +93,8 @@ class OrderList(BaseRequest):
 
         orders = DBOps.getSomeDoc(DBCollonfig.orders, {'userId': userId})
 
-        return self.createResData(orders)
+        return self.orderListByTime(orders)
 
-    def createResData(self, orders):
-        """
-            生成返回数据
-        """
-        return sorted(
-            orders,
-            key=lambda x: self.time_conversion(x['createTime'], 1),
-            reverse=True
-        )
 
 class CreateOrder(BaseRequest):
     """
@@ -168,6 +159,43 @@ class OrderInitData(BaseRequest):
 
         return self.response_success()
 
+class OrderOptionInitData(BaseRequest):
+    """
+        设置订单选项时的初始数据
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        initData = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderOption},
+            {args['optionType']: 1}
+        )[args['optionType']]
+
+        self.result['result'] = self.orderListByTime(initData)
+        return self.response_success()
+
+class DelOrderOption(BaseRequest):
+    """
+        删除订单选项
+    """
+    def handler_function(self):
+        args = self.get_request_data()
+
+        DBOps.setOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderOption},
+            {
+                '$pull': {
+                    args['optionType']: {
+                        'name': args['name']
+                    }
+                }
+            }
+        )
+
+        return self.response_success()
 
 class AddOrderClass(BaseRequest):
     """
