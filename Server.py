@@ -18,11 +18,15 @@ define('PORT', default=9090, help='Server port')
 if __name__ == '__main__':
     options.parse_command_line()
 
-    print 'Server start listen ' + str(options.PORT)
+    print 'Server start to listen ' + str(options.PORT)
 
     # 初始化基础模块
     RequestInit.init()
 
-    http_server = HTTPServer(Application(HandleList))
+    setting = {
+        'debug': True
+    }
+
+    http_server = HTTPServer(Application(HandleList, **setting))
     http_server.listen(options.PORT)
     IOLoop.instance().start()

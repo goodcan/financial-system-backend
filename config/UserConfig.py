@@ -9,6 +9,7 @@ class UserConfig:
     permissions = {
         'readeOrder': '查看订单',
         'createOrder': '创建订单',
-        'editOrder': '编辑订单',
-        'editOrderOption': '编辑订单选项'
+        'editOrder': '修改订单',
+        'editOrderOption': '编辑订单选项',
+        'editUser': '管理用户'
     }

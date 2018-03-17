@@ -22,9 +22,46 @@ def ResUserData(user):
         'userId': user['_id'],
         'username': user['username'],
         'permissions': user['permissions'],
-        'department': user['department']
+        'department': user['department'],
+        'tel': user['tel']
     }
     return res
+
+
+class EditUser(BaseRequest):
+    """
+        用户信息设置
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        newPermissions = {}
+        for _ in UserConfig.permissions:
+            if _ in args['setPermissions']:
+                newPermissions[_] = 1
+            else:
+                newPermissions[_] = 0
+
+        DBOps.setOneDoc(
+            DBCollonfig.users,
+            {'_id': args['_id']},
+            {
+                '$set': {
+                    'department': args['department'],
+                    'tel': args['tel'],
+                    'email': args['email'],
+                    'qq': args['qq'],
+                    'permissions': newPermissions
+                }
+            }
+        )
+
+        args['permissions'] = newPermissions
+        self.result['result'] = {
+            'userObj': ResUserData(args)
+        }
+        return self.response_success(msg=args['username'] + u'信息设置成功!')
 
 
 class EditUserInitData(BaseRequest):
