@@ -61,7 +61,7 @@ class EditUser(BaseRequest):
         self.result['result'] = {
             'userObj': ResUserData(args)
         }
-        return self.response_success(msg=args['username'] + u'信息设置成功!')
+        return self.response_success(msg=args['username'] + u'用户信息设置成功!')
 
 
 class EditUserInitData(BaseRequest):
