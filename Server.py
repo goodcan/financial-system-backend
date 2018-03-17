@@ -13,7 +13,7 @@ from tornado.web import Application
 from RequestAPI.RequestAPI import HandleList
 from RequestAPI.RequestInit import RequestInit
 
-define('PORT', default=9000, help='Server port')
+define('PORT', default=9090, help='Server port')
 
 if __name__ == '__main__':
     options.parse_command_line()

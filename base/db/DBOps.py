@@ -44,6 +44,14 @@ class DBOps(object):
         return cls.db[table].find_one(params, getParams)
 
     @classmethod
+    def getSomeDoc(cls, table, params, getParams=None):
+        """
+            获得一些文档
+        """
+
+        return cls.db[table].find(params, getParams)
+
+    @classmethod
     def setOneDoc(cls, table, params, setParams):
         """
             获得一个文档

@@ -26,6 +26,26 @@ def ResUserData(user):
     }
     return res
 
+class UserList(BaseRequest):
+    """
+        用户列表
+    """
+
+    def handler_function(self):
+
+        total = DBOps.getSomeDoc(DBCollonfig.users, {}, {'orders': 0})
+
+        userList = []
+        for user in total:
+            user.update({'userId': user['_id']})
+            userList.append(user)
+
+        self.result['result'] = sorted(
+            userList,
+            key=lambda x: self.time_conversion(x['createTime'], 1),
+            reverse=True
+        )
+        return self.response_success()
 
 class RegisterIinitData(BaseRequest):
     """
@@ -89,7 +109,7 @@ class Register(BaseRequest):
             'password': Encrypt.password_encrypt(password),
             'permissions': UserConfig.permissions,
             'createTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'lastLogin': '',
+            'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'department': '',
             'orders': [],
             'tel': '',
