@@ -96,7 +96,8 @@ class EditUserInitData(BaseRequest):
                 {'label': _['name'], 'value': _['name']} for _ in departments
             ],
             'permissions': [
-                {'key': k, 'label': v} for k, v in UserConfig.permissions.iteritems()
+                {'key': k, 'label': v} for k, v in
+                UserConfig.permissions.iteritems()
             ],
         }
         self.response_success()
@@ -112,7 +113,13 @@ class UserList(BaseRequest):
 
         userList = []
         for user in total:
-            user.update({'userId': user['_id']})
+            user.update({
+                'userId': user['_id'],
+                'pmsListName': [
+                    UserConfig.permissions[k]
+                    for k, v in user['permissions'].iteritems() if v == 1
+                ]
+            })
             userList.append(user)
 
         self.result['result'] = self.orderListByTime(userList, reverse=False)
@@ -218,7 +225,8 @@ class Login(BaseRequest):
         DBOps.setOneDoc(
             DBCollonfig.users,
             {'_id': user['_id']},
-            {'$set': {'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}}
+            {'$set': {
+                'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}}
         )
 
         self.result['result'] = {
@@ -247,7 +255,8 @@ class checkLogin(BaseRequest):
                 DBOps.setOneDoc(
                     DBCollonfig.users,
                     {'_id': user['_id']},
-                    {'$set': {'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}}
+                    {'$set': {'lastLogin': datetime.now().strftime(
+                        '%Y-%m-%d %H:%M:%S')}}
                 )
 
                 self.result['result'] = {
