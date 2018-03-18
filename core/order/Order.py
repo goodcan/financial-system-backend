@@ -5,11 +5,39 @@
 # @File     : Order.py
 # @Function : 订单相关操作
 
+import os
 from datetime import datetime
 
 from RequestAPI.BaseRequest import BaseRequest
 from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
+
+
+class DownloadSummary(BaseRequest):
+    """
+        下载汇总表
+    """
+
+    BASE_PATH = os.path.dirname(__file__) + '../../'
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        if args['summaryType'] == 'all':
+            pass
+
+    def getAllOrders(self):
+        """
+            获得所有订单
+        """
+        orders = DBOps.getSomeDoc(DBCollonfig.orders, {})
+
+        headers = [u'订单ID', u'']
+
+        totalPrice = 0
+        rows = []
+        for order in orders:
+            pass
 
 
 class EditOrderStatus(BaseRequest):
@@ -120,6 +148,7 @@ class CreateOrder(BaseRequest):
             '_id': orderId,
             'orderId': orderId,
             'userId': args['userId'],
+            'title': args['title'],
             'createUser': args['createUser'],
             'department': args['department'],
             'className': args['className'],
