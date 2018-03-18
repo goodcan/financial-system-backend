@@ -72,8 +72,18 @@ class OrderList(BaseRequest):
                 {'department': 1}
             )['department']
             self.result['result'] = self.getDptOrderList(department)
+        elif args['orderListType'] == 'summary':
+            self.result['result'] = self.getSummaryOrderList()
 
         return self.response_success()
+
+    def getSummaryOrderList(self):
+        """
+            获得所有的订单列表
+        """
+        orders = DBOps.getSomeDoc(DBCollonfig.orders, {})
+
+        return self.orderListByTime(orders)
 
     def getDptOrderList(self, department):
         """
