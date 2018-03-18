@@ -27,6 +27,12 @@ class BaseRequest(RequestHandler):
             self.handler_function()
         return self.write(self.result)
 
+    def handler_function(self):
+        """
+            用于继承处理业务
+        """
+        pass
+
     def verifyUser(self):
         """
             用户认证
@@ -89,11 +95,13 @@ class BaseRequest(RequestHandler):
 
         # 字符转转时间戳
         if option == 1:
-            return int(time.mktime(time.strptime(obj,'%Y-%m-%d %H:%M:%S'))*100)
+            return int(
+                time.mktime(time.strptime(obj, '%Y-%m-%d %H:%M:%S')) * 100)
 
         # 时间戳转字符串
         elif option == 2:
-            return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(obj*0.01))
+            return time.strftime('%Y-%m-%d %H:%M:%S',
+                                 time.localtime(obj * 0.01))
 
     def orderListByTime(self, data, reverse=True):
         """
@@ -105,8 +113,15 @@ class BaseRequest(RequestHandler):
             reverse=reverse
         )
 
-    def handler_function(self):
+    def resUserData(self, user):
         """
-            用于继承处理业务
+            返回前端的信息
         """
-        pass
+        res = {
+            'userId': user['_id'],
+            'username': user['username'],
+            'permissions': user['permissions'],
+            'department': user['department'],
+            'tel': user['tel']
+        }
+        return res

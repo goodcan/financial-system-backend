@@ -14,20 +14,6 @@ from config.DBCollConfig import DBCollonfig
 from config.UserConfig import UserConfig
 
 
-def ResUserData(user):
-    """
-        返回前端的信息
-    """
-    res = {
-        'userId': user['_id'],
-        'username': user['username'],
-        'permissions': user['permissions'],
-        'department': user['department'],
-        'tel': user['tel']
-    }
-    return res
-
-
 class EditUser(BaseRequest):
     """
         用户信息设置
@@ -59,7 +45,7 @@ class EditUser(BaseRequest):
 
         args['permissions'] = newPermissions
         self.result['result'] = {
-            'userObj': ResUserData(args)
+            'userObj': self.resUserData(args)
         }
         return self.response_success(msg=args['username'] + u'用户信息设置成功!')
 
@@ -198,7 +184,7 @@ class Register(BaseRequest):
         DBOps.insertDoc(DBCollonfig.users, user)
 
         self.result['result'] = {
-            'userObj': ResUserData(user),
+            'userObj': self.resUserData(user),
             'token': Authentication.generateToken(userId)
         }
 
@@ -230,7 +216,7 @@ class Login(BaseRequest):
         )
 
         self.result['result'] = {
-            'userObj': ResUserData(user),
+            'userObj': self.resUserData(user),
             'token': Authentication.generateToken(user['_id'])
         }
 
@@ -260,7 +246,7 @@ class checkLogin(BaseRequest):
                 )
 
                 self.result['result'] = {
-                    'userObj': ResUserData(user)
+                    'userObj': self.resUserData(user)
                 }
 
                 return self.response_success()
