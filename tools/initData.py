@@ -48,5 +48,20 @@ def removeUserOrders():
         db['users'].update({'_id': each['_id']}, each)
 
 
+def addOrderTitile():
+    DBManager.init()
+
+    db = DBManager.db
+
+    orders = db['orders'].find()
+
+    i = 1
+    for order in orders:
+        db['orders'].update(
+            {'_id': order['_id']},
+            {'$set': {'title': 'test' + str(i)}}
+        )
+        i += 1
+
 if __name__ == "__main__":
-    removeUserOrders()
+    addOrderTitile()

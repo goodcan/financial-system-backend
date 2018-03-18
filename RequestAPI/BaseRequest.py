@@ -18,6 +18,9 @@ class BaseRequest(RequestHandler):
 
     result = {'code': 0, 'msg': None, 'result': None}
 
+    def get(self):
+        self.handler_download()
+
     def post(self):
         verify = self.verifyUser()
         if not verify:
@@ -30,6 +33,12 @@ class BaseRequest(RequestHandler):
     def handler_function(self):
         """
             用于继承处理业务
+        """
+        pass
+
+    def handler_download(self):
+        """
+            处理下载
         """
         pass
 
