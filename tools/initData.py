@@ -63,5 +63,42 @@ def addOrderTitile():
         )
         i += 1
 
+
+def addOrderStamp():
+    DBManager.init()
+
+    db = DBManager.db
+
+    orders = db['orders'].find()
+
+    for order in orders:
+        db['orders'].update(
+            {'_id': order['_id']},
+            {'$set': {
+                'createTimeStamp': 0,
+                'completeTimeStamp': 0,
+                'paymentTimeStamp': 0,
+            }}
+        )
+
+def addOrderPrice():
+    DBManager.init()
+
+    db = DBManager.db
+
+    orders = db['orders'].find()
+
+    for order in orders:
+        db['orders'].update(
+            {'_id': order['_id']},
+            {'$set': {
+                # 'num': 1
+                # 'expectPrice': order['price'],
+                'expectTax': 'preTax'
+            }}
+        )
+
+
+
 if __name__ == "__main__":
-    addOrderTitile()
+    addOrderPrice()

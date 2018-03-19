@@ -122,23 +122,29 @@ class EditOrderStatus(BaseRequest):
         if nowStatus == setStatus:
             return self.response_failure(msg='订单状态已被修改！')
 
+        nowString = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         setParams = {}
         if setStatus == 1:
             setParams = {
                 'status': setStatus,
                 'completeTime': '',
-                'paymentTime': ''
+                'paymentTime': '',
+                'completeTimeStamp': 0,
+                'paymentTimeStamp': 0
             }
         elif setStatus == 2:
             setParams = {
                 'status': setStatus,
-                'completeTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'paymentTime': ''
+                'completeTime': nowString,
+                'paymentTime': '',
+                'completeTimeStamp': self.time_conversion(nowString, 1),
+                'paymentTimeStamp': 0
             }
         elif setStatus == 3:
             setParams = {
                 'status': setStatus,
-                'paymentTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                'paymentTime': nowString,
+                'paymentTimeStamp': self.time_conversion(nowString, 1)
             }
 
         DBOps.setOneDoc(
@@ -226,6 +232,7 @@ class CreateOrder(BaseRequest):
 
         now = datetime.now()
         orderId = str(args['userId']) + now.strftime('%Y%m%d%H%M%S')
+        nowString = now.strftime('%Y-%m-%d %H:%M:%S')
         order = {
             '_id': orderId,
             'orderId': orderId,
@@ -237,11 +244,18 @@ class CreateOrder(BaseRequest):
             'customerName': args['customerName'],
             'contactName': args['contactName'],
             'expectDate': args['expectDate'],
-            'price': args['price'],
+            'expectPrice': args['price'],
+            'expectTax': args['tax'],
+            'price': 0,
+            'tax': '',
+            'num': args['num'],
             'desc': args['desc'],
-            'createTime': now.strftime('%Y-%m-%d %H:%M:%S'),
+            'createTime': nowString,
             'completeTime': '',
             'paymentTime': '',
+            'createTimeStamp': self.time_conversion(nowString, 1),
+            'completeTimeStamp': 0,
+            'paymentTimeStamp': 0,
             'status': 1
         }
 
