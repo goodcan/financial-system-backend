@@ -103,6 +103,7 @@ class DownloadTable(BaseRequest):
 
         self.finish()
 
+
 class EditOrderStatus(BaseRequest):
     """
         编辑订单状态
@@ -243,12 +244,17 @@ class CreateOrder(BaseRequest):
             'className': args['className'],
             'customerName': args['customerName'],
             'contactName': args['contactName'],
-            'expectDate': args['expectDate'],
-            'expectPrice': args['price'],
-            'expectTax': args['tax'],
-            'price': 0,
-            'tax': '',
+            'expect': {
+                'date': args['expectDate'],
+                'price': args['price'],
+                'tax': args['tax'],
+                'num': args['num'],
+                'unit': args['unit'],
+            },
+            'price': args['price'],
+            'tax': args['tax'],
             'num': args['num'],
+            'unit': args['unit'],
             'desc': args['desc'],
             'createTime': nowString,
             'completeTime': '',

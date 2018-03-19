@@ -92,9 +92,9 @@ def addOrderPrice():
         db['orders'].update(
             {'_id': order['_id']},
             {'$set': {
-                # 'num': 1
-                # 'expectPrice': order['price'],
-                'expectTax': 'preTax'
+                'expectNum': order['num'],
+                'price': order['expectPrice'],
+                'tax': 'preTax'
             }}
         )
 
