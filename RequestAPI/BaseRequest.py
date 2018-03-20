@@ -118,7 +118,7 @@ class BaseRequest(RequestHandler):
         """
         return sorted(
             data,
-            key=lambda x: self.time_conversion(x['createTime'], 1),
+            key=lambda x: x['createTimeStamp'],
             reverse=reverse
         )
 

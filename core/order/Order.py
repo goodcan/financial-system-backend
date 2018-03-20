@@ -7,7 +7,7 @@
 
 import os
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from RequestAPI.BaseRequest import BaseRequest
 from base.db.DBOps import DBOps
@@ -194,47 +194,45 @@ class OrderList(BaseRequest):
 
         userId = self.getUserIdByToken()
 
+        search = args['search']
+        if search['date']:
+            startDate = search['date'][0] + ' 00:00:00'
+            endDate = search['date'][1] + ' 23:59:59'
+        else:
+            now = datetime.now()
+            endDate = now.strftime('%Y-%m-%d') + ' 23:59:59'
+            startDate = (now - timedelta(days=15)).strftime('%Y-%m-%d') + \
+                        ' 00:00:00'
+
+        searchParams = {
+            'createTimeStamp': {
+                '$gte': self.time_conversion(startDate, 1),
+                '$lte': self.time_conversion(endDate, 1)
+            }
+        }
+
+        orders = []
         if args['orderListType'] == 'self':
-            self.result['result'] = self.getSelfOrderList(userId)
+            params = {'userId': userId}
+            params.update(searchParams)
+            orders = DBOps.getSomeDoc(DBCollonfig.orders, params)
         elif args['orderListType'] == 'department':
             department = DBOps.getOneDoc(
                 DBCollonfig.users,
                 {'_id': userId},
                 {'department': 1}
             )['department']
-            self.result['result'] = self.getDptOrderList(department)
+            params = {'department': department}
+            params.update(searchParams)
+            orders = DBOps.getSomeDoc(DBCollonfig.orders, params)
         elif args['orderListType'] == 'summary':
-            self.result['result'] = self.getSummaryOrderList()
+            orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
 
+        self.result['result'] = {
+            'orders': self.orderListByTime(orders),
+            'searchDate': [startDate.split(' ')[0], endDate.split(' ')[0]]
+        }
         return self.response_success()
-
-    def getSummaryOrderList(self):
-        """
-            获得所有的订单列表
-        """
-        orders = DBOps.getSomeDoc(DBCollonfig.orders, {})
-
-        return self.orderListByTime(orders)
-
-    def getDptOrderList(self, department):
-        """
-            获得部门的订单列表
-        """
-        orders = DBOps.getSomeDoc(
-            DBCollonfig.orders,
-            {'department': department}
-        )
-
-        return self.orderListByTime(orders)
-
-    def getSelfOrderList(self, userId):
-        """
-            获得紫的订单列表
-        """
-
-        orders = DBOps.getSomeDoc(DBCollonfig.orders, {'userId': userId})
-
-        return self.orderListByTime(orders)
 
 
 class CreateOrder(BaseRequest):
