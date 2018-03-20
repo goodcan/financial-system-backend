@@ -142,6 +142,7 @@ class EditOrderStatus(BaseRequest):
                 'tax': args['tax'],
                 'num': args['num'],
                 'unit': args['unit'],
+                'evaluation': 0
             }
         elif setStatus == 2:
             setParams = {
@@ -154,6 +155,7 @@ class EditOrderStatus(BaseRequest):
                 'tax': args['tax'],
                 'num': args['num'],
                 'unit': args['unit'],
+                'evaluation': args['evaluation']
             }
         elif setStatus == 3:
             setParams = {
@@ -279,7 +281,8 @@ class CreateOrder(BaseRequest):
             'createTimeStamp': self.time_conversion(nowString, 1),
             'completeTimeStamp': 0,
             'paymentTimeStamp': 0,
-            'status': 1
+            'status': 1,
+            'evaluation': 0
         }
 
         DBOps.insertDoc(DBCollonfig.orders, order)
