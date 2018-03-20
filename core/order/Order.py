@@ -208,8 +208,13 @@ class OrderList(BaseRequest):
             'createTimeStamp': {
                 '$gte': self.time_conversion(startDate, 1),
                 '$lte': self.time_conversion(endDate, 1)
-            }
+            },
         }
+
+        if search['status'] != -1:
+            searchParams.update({
+                'status': search['status']
+            })
 
         orders = []
         if args['orderListType'] == 'self':
