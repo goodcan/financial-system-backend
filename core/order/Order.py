@@ -48,7 +48,7 @@ class DownloadTable(BaseRequest):
         """
 
         header = [u'订单ID', u'名称', u'创建时间', u'创建人',
-                  u'部门', u'类目', u'客户', u'对接人员', u'金额（￥）',
+                  u'部门', u'类目', u'客户', u'外包人员', u'金额（￥）',
                   u'状态（1：制作中；2：待付款；3：已付款）',
                   u'预计完成日期', u'实际完成时间', u'完成付款时间', u'备注']
 
@@ -131,7 +131,17 @@ class EditOrderStatus(BaseRequest):
                 'completeTime': '',
                 'paymentTime': '',
                 'completeTimeStamp': 0,
-                'paymentTimeStamp': 0
+                'paymentTimeStamp': 0,
+                'expect': {
+                    'price': args['price'],
+                    'tax': args['tax'],
+                    'num': args['num'],
+                    'unit': args['unit']
+                },
+                'price': args['price'],
+                'tax': args['tax'],
+                'num': args['num'],
+                'unit': args['unit'],
             }
         elif setStatus == 2:
             setParams = {
@@ -139,7 +149,11 @@ class EditOrderStatus(BaseRequest):
                 'completeTime': nowString,
                 'paymentTime': '',
                 'completeTimeStamp': self.time_conversion(nowString, 1),
-                'paymentTimeStamp': 0
+                'paymentTimeStamp': 0,
+                'price': args['price'],
+                'tax': args['tax'],
+                'num': args['num'],
+                'unit': args['unit'],
             }
         elif setStatus == 3:
             setParams = {
@@ -244,8 +258,8 @@ class CreateOrder(BaseRequest):
             'className': args['className'],
             'customerName': args['customerName'],
             'contactName': args['contactName'],
+            'expectDate': args['expectDate'],
             'expect': {
-                'date': args['expectDate'],
                 'price': args['price'],
                 'tax': args['tax'],
                 'num': args['num'],

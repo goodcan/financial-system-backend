@@ -105,12 +105,12 @@ class BaseRequest(RequestHandler):
         # 字符转转时间戳
         if option == 1:
             return int(
-                time.mktime(time.strptime(obj, '%Y-%m-%d %H:%M:%S')) * 100)
+                time.mktime(time.strptime(obj, '%Y-%m-%d %H:%M:%S')) * 1000)
 
         # 时间戳转字符串
         elif option == 2:
             return time.strftime('%Y-%m-%d %H:%M:%S',
-                                 time.localtime(obj * 0.01))
+                                 time.localtime(obj * 0.001))
 
     def orderListByTime(self, data, reverse=True):
         """
