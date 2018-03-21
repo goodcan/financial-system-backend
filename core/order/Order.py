@@ -560,3 +560,24 @@ class AddOrderDpt(BaseRequest):
             )
 
         return self.response_success()
+
+
+class AddOrderHelpInfo(BaseRequest):
+    """
+        添加订单帮助信息
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        DBOps.setOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderHelpInfo},
+            {
+                '$set': {
+                    'helpInfo': args['helpInfo'].replace('\n', '<br/>')
+                }
+            }
+        )
+
+        return self.response_success()
