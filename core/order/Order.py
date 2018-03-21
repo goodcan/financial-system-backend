@@ -400,7 +400,9 @@ class AddOrderClass(BaseRequest):
                         'classes': {
                             'name': each['name'],
                             'createTime': self.time_conversion(
-                                each['time'], 2),
+                                each['time'], 2
+                            ),
+                            'createTimeStamp': each['time'],
                             'createUser': createUser
                         }
                     }
@@ -446,7 +448,9 @@ class AddOrderCustomer(BaseRequest):
                         'customers': {
                             'name': each['name'],
                             'createTime': self.time_conversion(
-                                each['time'], 2),
+                                each['time'], 2
+                            ),
+                            'createTimeStamp': each['time'],
                             'createUser': createUser
                         }
                     }
@@ -495,7 +499,9 @@ class AddOrderContact(BaseRequest):
                         'contacts': {
                             'name': each['name'],
                             'createTime': self.time_conversion(
-                                each['time'], 2),
+                                each['time'], 2
+                            ),
+                            'createTimeStamp': each['time'],
                             'createUser': createUser,
                             'tel': tel,
                             'email': email,
@@ -544,7 +550,9 @@ class AddOrderDpt(BaseRequest):
                         'departments': {
                             'name': each['name'],
                             'createTime': self.time_conversion(
-                                each['time'], 2),
+                                each['time'], 2
+                            ),
+                            'createTimeStamp': each['time'],
                             'createUser': createUser,
                         }
                     }
