@@ -304,6 +304,7 @@ class OrderInitData(BaseRequest):
         customers = orderOptions['customers']
         contacts = orderOptions['contacts']
         departments = orderOptions['departments']
+        helpInfo = orderOptions['helpInfo']
 
         self.result['result'] = {
             'classes': [
@@ -317,7 +318,8 @@ class OrderInitData(BaseRequest):
             ],
             'departments': [
                 {'label': _['name'], 'value': _['name']} for _ in departments
-            ]
+            ],
+            'helpInfo': helpInfo
         }
 
         return self.response_success()
