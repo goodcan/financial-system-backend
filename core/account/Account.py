@@ -167,14 +167,17 @@ class Register(BaseRequest):
 
         userId = DBCollonfig.startNum + userNum + 1
 
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         # 初始化用户数据
         user = {
             '_id': userId,
             'username': username,
             'password': Encrypt.password_encrypt(password),
             'permissions': {_: 0 for _ in UserConfig.permissions},
-            'createTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'lastLogin': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'createTime': now,
+            'createTimeStamp': self.time_conversion(now, 1),
+            'lastLogin': now,
             'department': '',
             'tel': '',
             'email': '',
