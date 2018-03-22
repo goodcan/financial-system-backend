@@ -572,12 +572,17 @@ class AddOrderHelpInfo(BaseRequest):
     def handler_function(self):
         args = self.get_request_data()
 
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         DBOps.setOneDoc(
             DBCollonfig.options,
             {'_id': DBCollonfig.orderHelpInfo},
             {
                 '$set': {
-                    'helpInfo': args['helpInfo'].replace('\n', '<br/>')
+                    'helpInfo': [{
+                        'content': args['helpInfo'],
+                        'createTime': now,
+                        'createTimeStamp': self.time_conversion(now, 1)
+                    }]
                 }
             }
         )
