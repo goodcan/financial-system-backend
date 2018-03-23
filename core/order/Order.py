@@ -269,11 +269,13 @@ class CreateOrder(BaseRequest):
                 'tax': args['tax'],
                 'num': args['num'],
                 'unit': args['unit'],
+                'unitNum': args['unitNum']
             },
             'price': args['price'],
             'tax': args['tax'],
             'num': args['num'],
             'unit': args['unit'],
+            'unitNum': args['unitNum'],
             'desc': args['desc'],
             'createTime': nowString,
             'completeTime': '',
@@ -315,7 +317,10 @@ class OrderInitData(BaseRequest):
                 {'label': _['name'], 'value': _['name']} for _ in customers
             ],
             'contacts': [
-                {'label': _['name'], 'value': _['name']} for _ in contacts
+                {
+                    'label': _['name'] + ' | ' + _['workClass'],
+                    'value': _['name']
+                } for _ in contacts
             ],
             'departments': [
                 {'label': _['name'], 'value': _['name']} for _ in departments
@@ -526,9 +531,7 @@ class AddOrderContact(BaseRequest):
                             'email': email,
                             'qq': qq,
                             'payInfo': each['payInfo'],
-                            'workClass': ContactConfig.workClasses[
-                                each['workClass']
-                            ]
+                            'workClass': each['workClass']
                         }
                     }
                 }
