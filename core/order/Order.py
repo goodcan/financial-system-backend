@@ -449,6 +449,8 @@ class AddOrderCustomer(BaseRequest):
                     '$push': {
                         'customers': {
                             'name': each['name'],
+                            'billInfo': each['billInfo'],
+                            'mailAddress': each['mailAddress'],
                             'createTime': self.time_conversion(
                                 each['time'], 2
                             ),
