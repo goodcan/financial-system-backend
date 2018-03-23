@@ -21,3 +21,4 @@ class DBCollonfig:
     orderCustomer = 2001
     orderContact = 2001
     orderHelpInfo = 2001
+    workClasses = 2001

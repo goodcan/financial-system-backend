@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 from RequestAPI.BaseRequest import BaseRequest
 from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
-from config.ContactConfig import ContactConfig
 
 
 class DownloadTable(BaseRequest):
@@ -299,7 +298,8 @@ class OrderInitData(BaseRequest):
     def handler_function(self):
         orderOptions = DBOps.getOneDoc(
             DBCollonfig.options,
-            {'_id': DBCollonfig.orderOption}
+            {'_id': DBCollonfig.orderOption},
+            {'workClasses': 0}
         )
         classes = orderOptions['classes']
         customers = orderOptions['customers']
@@ -341,12 +341,17 @@ class OrderOptionInitData(BaseRequest):
         )[args['optionType']]
 
         if args['optionType'] == 'contacts':
+            workClasses = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {'_id': DBCollonfig.orderOption},
+                {'workClasses': 1}
+            )['workClasses']
             self.result['result'] = {
                 'contacts': self.orderListByTime(initData),
                 'workClasses': [
-                    {'label': v, 'value': k}
-                    for k, v in ContactConfig.workClasses.iteritems()
-                ]
+                    {'label': _['name'], 'value': _['name']}
+                    for _ in workClasses
+                ],
             }
         else:
             self.result['result'] = self.orderListByTime(initData)
@@ -602,5 +607,53 @@ class AddOrderHelpInfo(BaseRequest):
                 }
             }
         )
+
+        return self.response_success()
+
+
+class AddWorkClass(BaseRequest):
+    """
+        添加订单部门选项
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        createUser = args.get('createUser', None)
+        newWorkClasswss = args.get('workClasses', None)
+
+        error_list = []
+        for each in newWorkClasswss:
+            isExist = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderOption,
+                    'departments.name': each['name']
+                }
+            )
+            if isExist:
+                error_list.append(each['name'])
+
+        if error_list:
+            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            return self.response_failure(msg=msg)
+
+        for each in newWorkClasswss:
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {'_id': DBCollonfig.orderOption},
+                {
+                    '$push': {
+                        'workClasses': {
+                            'name': each['name'],
+                            'createTime': self.time_conversion(
+                                each['time'], 2
+                            ),
+                            'createTimeStamp': each['time'],
+                            'createUser': createUser,
+                        }
+                    }
+                }
+            )
 
         return self.response_success()

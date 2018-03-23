@@ -29,4 +29,5 @@ HandleList = [
     (r'/api/delOrderOption', Order.DelOrderOption),
     (r'/api/downloadTable', Order.DownloadTable),
     (r'/api/addOrderHelpInfo', Order.AddOrderHelpInfo),
+    (r'/api/addWorkClass', Order.AddWorkClass),
 ]
