@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from RequestAPI.BaseRequest import BaseRequest
 from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
+from config.ContactConfig import ContactConfig
 
 
 class DownloadTable(BaseRequest):
@@ -339,7 +340,16 @@ class OrderOptionInitData(BaseRequest):
             {args['optionType']: 1}
         )[args['optionType']]
 
-        self.result['result'] = self.orderListByTime(initData)
+        if args['optionType'] == 'contacts':
+            self.result['result'] = {
+                'contacts': self.orderListByTime(initData),
+                'workClasses': [
+                    {'label': v, 'value': k}
+                    for k, v in ContactConfig.workClasses.iteritems()
+                ]
+            }
+        else:
+            self.result['result'] = self.orderListByTime(initData)
         return self.response_success()
 
 
@@ -510,7 +520,10 @@ class AddOrderContact(BaseRequest):
                             'tel': tel,
                             'email': email,
                             'qq': qq,
-                            'payInfo': each['payInfo']
+                            'payInfo': each['payInfo'],
+                            'workClass': ContactConfig.workClasses[
+                                each['workClass']
+                            ]
                         }
                     }
                 }
