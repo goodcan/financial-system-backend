@@ -136,12 +136,15 @@ class EditOrderStatus(BaseRequest):
                     'price': args['price'],
                     'tax': args['tax'],
                     'num': args['num'],
-                    'unit': args['unit']
+                    'unit': args['unit'],
+                    'unitNum': args['unitNum']
                 },
                 'price': args['price'],
                 'tax': args['tax'],
                 'num': args['num'],
                 'unit': args['unit'],
+                'unitNum': args['unitNum'],
+                'sumPrice': round(args['sumPrice'], 2),
                 'evaluation': 0
             }
         elif setStatus == 2:
@@ -155,7 +158,8 @@ class EditOrderStatus(BaseRequest):
                 'tax': args['tax'],
                 'num': args['num'],
                 'unit': args['unit'],
-                'evaluation': args['evaluation']
+                'evaluation': args['evaluation'],
+                'sumPrice': round(args['sumPrice'], 2)
             }
         elif setStatus == 3:
             setParams = {
