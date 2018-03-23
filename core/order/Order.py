@@ -509,7 +509,8 @@ class AddOrderContact(BaseRequest):
                             'createUser': createUser,
                             'tel': tel,
                             'email': email,
-                            'qq': qq
+                            'qq': qq,
+                            'payInfo': each['payInfo']
                         }
                     }
                 }
