@@ -272,6 +272,7 @@ class CreateOrder(BaseRequest):
                 'unitNum': args['unitNum']
             },
             'price': args['price'],
+            'sumPrice': 0,
             'tax': args['tax'],
             'num': args['num'],
             'unit': args['unit'],
