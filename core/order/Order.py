@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from RequestAPI.BaseRequest import BaseRequest
 from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
+from config.OrderConfig import OrderConfig
 
 
 class DownloadTable(BaseRequest):
@@ -48,12 +49,15 @@ class DownloadTable(BaseRequest):
         """
 
         header = [u'订单ID', u'名称', u'创建时间', u'创建人',
-                  u'部门', u'类目', u'客户', u'外包人员', u'金额（￥）',
+                  u'部门', u'类目', u'客户', u'外包人员',
+                  u'预算单价', u'预算总金额（￥）',
+                  u'实际单价', u'实际总金额（￥）',
                   u'状态（1：制作中；2：待付款；3：已付款）',
                   u'预计完成日期', u'实际完成时间', u'完成付款时间', u'备注']
 
         rows = []
         for order in orders:
+            status = order['status']
             rows.append((
                 order['orderId'],
                 order['title'].encode('gbk'),
@@ -63,8 +67,11 @@ class DownloadTable(BaseRequest):
                 order['className'].encode('gbk'),
                 order['customerName'].encode('gbk'),
                 order['contactName'].encode('gbk'),
-                order['price'],
-                order['status'],
+                self.getUnitPrice(order, 1),
+                order['expect']['sumPrice'],
+                self.getUnitPrice(order) if status > 1 else '',
+                order['sumPrice'] if status > 1 else '',
+                status,
                 order['expectDate'],
                 order['completeTime'],
                 order['paymentTime'],
@@ -75,6 +82,23 @@ class DownloadTable(BaseRequest):
         self.create_csv(path, header, rows)
 
         self.download_file(path, filename)
+
+    def getUnitPrice(self, order, choose=None):
+        """
+            显示单价
+        """
+        if choose == 1:
+            res = OrderConfig.Tax[order['expect']['tax']] + ' | ' + \
+                  str(order['expect']['unitNum']) + \
+                  OrderConfig.Unit[order['expect']['unit']] + ' | ' + \
+                  str(order['expect']['price'])
+        else:
+            res = OrderConfig.Tax[order['tax']] + ' | ' + \
+                  str(order['unitNum']) + \
+                  OrderConfig.Unit[order['unit']] + ' | ' + \
+                  str(order['price'])
+
+        return res.encode('gbk')
 
     def create_csv(self, filename, header, rows):
         """
@@ -137,7 +161,8 @@ class EditOrderStatus(BaseRequest):
                     'tax': args['tax'],
                     'num': args['num'],
                     'unit': args['unit'],
-                    'unitNum': args['unitNum']
+                    'unitNum': args['unitNum'],
+                    'sumPrice': round(args['sumPrice'], 2),
                 },
                 'price': args['price'],
                 'tax': args['tax'],
@@ -158,6 +183,7 @@ class EditOrderStatus(BaseRequest):
                 'tax': args['tax'],
                 'num': args['num'],
                 'unit': args['unit'],
+                'unitNum': args['unitNum'],
                 'evaluation': args['evaluation'],
                 'sumPrice': round(args['sumPrice'], 2)
             }
@@ -273,10 +299,11 @@ class CreateOrder(BaseRequest):
                 'tax': args['tax'],
                 'num': args['num'],
                 'unit': args['unit'],
-                'unitNum': args['unitNum']
+                'unitNum': args['unitNum'],
+                'sumPrice': round(args['sumPrice'], 2),
             },
             'price': args['price'],
-            'sumPrice': 0,
+            'sumPrice': round(args['sumPrice'], 2),
             'tax': args['tax'],
             'num': args['num'],
             'unit': args['unit'],
