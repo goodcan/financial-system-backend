@@ -50,8 +50,8 @@ class DownloadTable(BaseRequest):
 
         header = [u'订单ID', u'名称', u'创建时间', u'创建人',
                   u'部门', u'类目', u'客户', u'外包人员',
-                  u'预算单价', u'预算总金额（￥）',
-                  u'实际单价', u'实际总金额（￥）',
+                  u'预算单价', u'预算数量', u'预算总金额（￥）',
+                  u'实际单价', u'实际数量', u'实际总金额（￥）',
                   u'状态（1：制作中；2：待付款；3：已付款）',
                   u'预计完成日期', u'实际完成时间', u'完成付款时间', u'备注']
 
@@ -68,8 +68,10 @@ class DownloadTable(BaseRequest):
                 order['customerName'].encode('gbk'),
                 order['contactName'].encode('gbk'),
                 self.getUnitPrice(order, 1),
+                order['expect']['num'],
                 order['expect']['sumPrice'],
                 self.getUnitPrice(order) if status > 1 else '',
+                order['num'] if status > 1 else '',
                 order['sumPrice'] if status > 1 else '',
                 status,
                 order['expectDate'],
