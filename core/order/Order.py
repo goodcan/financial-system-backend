@@ -23,6 +23,8 @@ class EditOrderOption(BaseRequest):
     def handler_function(self):
         args = self.get_request_data()
         option = args['option']
+        createUser = args['createUser']
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if args['optionType'] == 'contacts':
             DBOps.setOneDoc(
                 DBCollonfig.options,
@@ -36,11 +38,38 @@ class EditOrderOption(BaseRequest):
                         'contacts.$.email': option['email'],
                         'contacts.$.workClass': option['workClass'],
                         'contacts.$.payInfo': option['payInfo'],
-                        'contacts.$.qq': option['qq']
+                        'contacts.$.qq': option['qq'],
+                        'contacts.$.createUser': createUser,
+                        'contacts.$.createTime': now,
+                        'contacts.$.createTimeStamp': self.time_conversion(
+                            now, 1
+                        ),
                     }
                 }
             )
             return self.response_success()
+        elif args['optionType'] == 'customers':
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderCustomer,
+                    'customers.name': option['name']
+                },
+                {
+                    '$set': {
+                        'customers.$.billInfo': option['billInfo'],
+                        'customers.$.mailAddress': option['mailAddress'],
+                        'customers.$.createUser': createUser,
+                        'customers.$.createTime': now,
+                        'customers.$.createTimeStamp': self.time_conversion(
+                            now, 1
+                        ),
+                    }
+                }
+            )
+            return self.response_success()
+        else:
+            return self.response_failure(msg=u'没有需要修改的信息')
 
 
 class DownloadTable(BaseRequest):
