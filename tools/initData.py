@@ -23,7 +23,7 @@ def clearUserData():
         db['users'].update({'_id': each['_id']}, each)
 
 
-def moveUserOrders():
+def editUserPms():
     DBManager.init()
 
     db = DBManager.db
@@ -31,9 +31,11 @@ def moveUserOrders():
     total = db['users'].find()
 
     for each in total:
-        for order in each['orders']:
-            order.update({'_id': order['orderId']})
-            db['orders'].insert(order)
+        pms = each['permissions']
+        pms.update({
+            'editOrderMorePara': 0
+        })
+        db['users'].update({'_id': each['_id']}, {'$set': {'permissions': pms}})
 
 
 def removeUserOrders():
@@ -101,4 +103,4 @@ def addOrderPrice():
 
 
 if __name__ == "__main__":
-    addOrderPrice()
+    editUserPms()

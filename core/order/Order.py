@@ -231,6 +231,18 @@ class EditOrderStatus(BaseRequest):
                 'sumPrice': round(args['sumPrice'], 2),
                 'evaluation': 0
             }
+
+            # 订单统计用户修改订单其他信息
+            if args.get('isCanEdit', ''):
+                setParams.update({
+                    'title': args['title'],
+                    'className': args['className'],
+                    'customerName': args['customerName'],
+                    'contactName': args['contactName'],
+                    'department': args['department'],
+                    'desc': args['desc']
+                })
+
         elif setStatus == 2:
             setParams = {
                 'status': setStatus,
