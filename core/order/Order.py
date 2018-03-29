@@ -15,6 +15,34 @@ from config.DBCollConfig import DBCollonfig
 from config.OrderConfig import OrderConfig
 
 
+class EditOrderOption(BaseRequest):
+    """
+        编辑订单选项
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+        option = args['option']
+        if args['optionType'] == 'contacts':
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderContact,
+                    'contacts.name': option['name']
+                },
+                {
+                    '$set': {
+                        'contacts.$.tel': option['tel'],
+                        'contacts.$.email': option['email'],
+                        'contacts.$.workClass': option['workClass'],
+                        'contacts.$.payInfo': option['payInfo'],
+                        'contacts.$.qq': option['qq']
+                    }
+                }
+            )
+            return self.response_success()
+
+
 class DownloadTable(BaseRequest):
     """
         下载汇总表
