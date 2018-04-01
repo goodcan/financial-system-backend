@@ -6,6 +6,7 @@
 # @Function : 订单相关操作
 
 import os
+import re
 import csv
 from datetime import datetime, timedelta
 
@@ -450,10 +451,19 @@ class OrderOptionInitData(BaseRequest):
 
         if args['optionType'] == 'contacts':
 
+            # 搜索删选
+            keyName = args['keyName']
+            workClass = args['workClass']
+            orderContacts = self.orderListByTime(initData)
+            totalContacts = [
+                _ for _ in orderContacts
+                if re.match('.*' + keyName + '.*', _['name']) and \
+                re.match(workClass, _['workClass'])
+            ]
+
             # 分页处理
             page = args['page']
             pageSize = OrderConfig.optionPageSize
-            totalContacts = self.orderListByTime(initData)
             pageStart = (page - 1) * pageSize
             pageEnd = page * pageSize
             contacts = totalContacts[pageStart:pageEnd]

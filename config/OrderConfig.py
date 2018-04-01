@@ -6,7 +6,9 @@
 # @Function : 订单配置
 
 class OrderConfig:
-    optionPageSize = 2
+
+    # 编辑订单选项时显示的每页大小
+    optionPageSize = 10
 
     Unit = {
         'page': u'页',
