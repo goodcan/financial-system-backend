@@ -6,6 +6,8 @@
 # @Function : 订单配置
 
 class OrderConfig:
+    optionPageSize = 2
+
     Unit = {
         'page': u'页',
         'character': u'字'
@@ -15,3 +17,4 @@ class OrderConfig:
         'preTax': u'税前',
         'afterTax': u'税后'
     }
+

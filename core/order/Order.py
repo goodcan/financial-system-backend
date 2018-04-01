@@ -449,13 +449,24 @@ class OrderOptionInitData(BaseRequest):
         )[args['optionType']]
 
         if args['optionType'] == 'contacts':
+
+            # 分页处理
+            page = args['page']
+            pageSize = OrderConfig.optionPageSize
+            totalContacts = self.orderListByTime(initData)
+            pageStart = (page - 1) * pageSize
+            pageEnd = page * pageSize
+            contacts = totalContacts[pageStart:pageEnd]
+
             workClasses = DBOps.getOneDoc(
                 DBCollonfig.options,
                 {'_id': DBCollonfig.orderOption},
                 {'workClasses': 1}
             )['workClasses']
             self.result['result'] = {
-                'contacts': self.orderListByTime(initData),
+                'contacts': contacts,
+                'totalCount': len(totalContacts),
+                'pageSize': OrderConfig.optionPageSize,
                 'workClasses': [
                     {'label': _['name'], 'value': _['name']}
                     for _ in workClasses
