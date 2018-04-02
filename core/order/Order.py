@@ -455,11 +455,15 @@ class OrderOptionInitData(BaseRequest):
             keyName = args['keyName']
             workClass = args['workClass']
             orderContacts = self.orderListByTime(initData)
-            totalContacts = [
-                _ for _ in orderContacts
-                if re.match('.*' + keyName + '.*', _['name']) and \
-                re.match(workClass, _['workClass'])
-            ]
+
+            try:
+                totalContacts = [
+                    _ for _ in orderContacts
+                    if re.match(r'.*' + keyName + '.*', _['name']) and \
+                    re.match(workClass, _['workClass'])
+                ]
+            except Exception as e:
+                totalContacts = []
 
             # 分页处理
             page = args['page']
