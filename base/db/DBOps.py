@@ -66,3 +66,11 @@ class DBOps(object):
         """
 
         return cls.db[table].update(params, setParams)
+
+    @classmethod
+    def getAggregate(cls, table, params):
+        """
+            获得一个文档
+        """
+
+        return cls.db[table].aggregate(params)

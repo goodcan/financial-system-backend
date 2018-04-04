@@ -7,6 +7,7 @@
 
 from core.account import Account
 from core.order import Order
+from core.statistics import Statistics
 
 HandleList = [
     (r'/api/register', Account.Register),
@@ -31,4 +32,5 @@ HandleList = [
     (r'/api/addOrderHelpInfo', Order.AddOrderHelpInfo),
     (r'/api/addWorkClass', Order.AddWorkClass),
     (r'/api/editOrderOption', Order.EditOrderOption),
+    (r'/api/contactUseTop10', Statistics.ContactUseTop10),
 ]
