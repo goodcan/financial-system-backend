@@ -165,6 +165,7 @@ class Register(BaseRequest):
 
         # 记录日志
         LogDBOps.writeLog(userId, LogDBConfig.doRegister)
+        LogDBOps.writeLog(userId, LogDBConfig.doLogin)
 
         self.response_success()
 
@@ -201,6 +202,7 @@ class Register(BaseRequest):
         }
 
         return userId
+
 
 class Login(BaseRequest):
     """

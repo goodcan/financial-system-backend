@@ -7,13 +7,13 @@
 
 class UserConfig:
     permissions = {
-        'createOrder': '创建订单',
-        'editSelfOrder': '修改自己订的订单',
-        'readDptOrder': '查看自己部门的订单',
-        'editDptOrder': '修改自己部门的订单',
-        'editAllOrder': '修改所有订单',
-        'editOrderOption': '编辑订单选项',
-        'editUser': '管理用户',
-        'summaryOrder': '订单汇总',
-        'editOrderMoreParam': '修改订单的多个参数'
+        'createOrder': u'创建订单',
+        'editSelfOrder': u'修改自己创建的订单',
+        'readDptOrder': u'查看自己部门的订单',
+        'editDptOrder': u'修改自己部门的订单',
+        'editAllOrder': u'修改所有订单',
+        'editOrderOption': u'编辑订单选项',
+        'editUser': u'管理用户',
+        'summaryOrder': u'订单汇总',
+        'editOrderMoreParam': u'修改订单的多个参数'
     }
