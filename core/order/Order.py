@@ -14,6 +14,19 @@ from RequestAPI.BaseRequest import BaseRequest
 from base.db.DBOps import DBOps
 from config.DBCollConfig import DBCollonfig
 from config.OrderConfig import OrderConfig
+from base.db.LogDBOps import LogDBOps
+from config.LogDBConfig import LogDBConfig
+
+
+class WriteDownloadLog(BaseRequest):
+    """
+        记录下载日志
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doDownloadTable)
 
 
 class EditOrderOption(BaseRequest):
@@ -48,6 +61,10 @@ class EditOrderOption(BaseRequest):
                     }
                 }
             )
+
+            # 记录日志
+            LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doEditContact)
+
             return self.response_success()
         elif args['optionType'] == 'customers':
             DBOps.setOneDoc(
@@ -68,6 +85,10 @@ class EditOrderOption(BaseRequest):
                     }
                 }
             )
+
+            # 记录日志
+            LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doEditCustomer)
+
             return self.response_success()
         else:
             return self.response_failure(msg=u'没有需要修改的信息')
@@ -207,6 +228,8 @@ class EditOrderStatus(BaseRequest):
         if nowStatus == setStatus:
             return self.response_failure(msg='订单状态已被修改！')
 
+        logAction = None
+
         nowString = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         setParams = {}
         if setStatus == 1:
@@ -244,6 +267,9 @@ class EditOrderStatus(BaseRequest):
                     'desc': args['desc']
                 })
 
+            # 记录日志时的操作说明
+            logAction = LogDBConfig.doEditOrder
+
         elif setStatus == 2:
             setParams = {
                 'status': setStatus,
@@ -259,6 +285,10 @@ class EditOrderStatus(BaseRequest):
                 'evaluation': args['evaluation'],
                 'sumPrice': round(args['sumPrice'], 2)
             }
+
+            # 记录日志时的操作说明
+            logAction = LogDBConfig.doCompleteOrder
+
         elif setStatus == 3:
             setParams = {
                 'status': setStatus,
@@ -266,11 +296,17 @@ class EditOrderStatus(BaseRequest):
                 'paymentTimeStamp': self.time_conversion(nowString, 1)
             }
 
+            # 记录日志时的操作说明
+            logAction = LogDBConfig.doPaymentOrder
+
         DBOps.setOneDoc(
             DBCollonfig.orders,
             {'_id': orderId},
             {'$set': setParams}
         )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], logAction)
 
         return self.response_success(msg='订单状态修改成功！')
 
@@ -284,6 +320,9 @@ class DelOrder(BaseRequest):
         args = self.get_request_data()
 
         DBOps.removeDoc(DBCollonfig.orders, {'_id': args['orderId']})
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doDelOrder)
 
         self.response_success()
 
@@ -393,6 +432,9 @@ class CreateOrder(BaseRequest):
 
         DBOps.insertDoc(DBCollonfig.orders, order)
 
+        # 记录日志
+        LogDBOps.writeLog(args['userId'], LogDBConfig.doCreateOrder)
+
         self.response_success()
 
 
@@ -460,7 +502,7 @@ class OrderOptionInitData(BaseRequest):
                 totalContacts = [
                     _ for _ in orderContacts
                     if re.match(r'.*' + keyName + '.*', _['name']) and \
-                    re.match(workClass, _['workClass'])
+                       re.match(workClass, _['workClass'])
                 ]
             except Exception as e:
                 totalContacts = []
@@ -496,6 +538,14 @@ class DelOrderOption(BaseRequest):
         删除订单选项
     """
 
+    LogAction = {
+        'classes': LogDBConfig.doDelClass,
+        'customers': LogDBConfig.doDelCustomer,
+        'contacts': LogDBConfig.doDelContact,
+        'departments': LogDBConfig.doDelDepartment,
+        'workClasses': LogDBConfig.doDelWorkClass
+    }
+
     def handler_function(self):
         args = self.get_request_data()
 
@@ -510,6 +560,9 @@ class DelOrderOption(BaseRequest):
                 }
             }
         )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], self.LogAction[args['optionType']])
 
         return self.response_success()
 
@@ -558,6 +611,9 @@ class AddOrderClass(BaseRequest):
                     }
                 }
             )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateClass)
 
         return self.response_success()
 
@@ -608,6 +664,9 @@ class AddOrderCustomer(BaseRequest):
                     }
                 }
             )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateCustomer)
 
         return self.response_success()
 
@@ -665,6 +724,9 @@ class AddOrderContact(BaseRequest):
                 }
             )
 
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateContact)
+
         return self.response_success()
 
 
@@ -713,6 +775,9 @@ class AddOrderDpt(BaseRequest):
                 }
             )
 
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateDepartment)
+
         return self.response_success()
 
 
@@ -738,6 +803,9 @@ class AddOrderHelpInfo(BaseRequest):
                 }
             }
         )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doEditHelpInfo)
 
         return self.response_success()
 
@@ -786,5 +854,8 @@ class AddWorkClass(BaseRequest):
                     }
                 }
             )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateWorkClass)
 
         return self.response_success()

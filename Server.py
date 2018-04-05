@@ -24,7 +24,7 @@ if __name__ == '__main__':
     RequestInit.init()
 
     setting = {
-        # 'debug': True
+        'debug': True
     }
 
     http_server = HTTPServer(Application(HandleList, **setting))

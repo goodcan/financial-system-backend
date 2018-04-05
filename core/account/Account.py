@@ -12,6 +12,8 @@ from base.db.DBOps import DBOps
 from base.encrypt.Encrypt import Encrypt
 from config.DBCollConfig import DBCollonfig
 from config.UserConfig import UserConfig
+from base.db.LogDBOps import LogDBOps
+from config.LogDBConfig import LogDBConfig
 
 
 class EditUser(BaseRequest):
@@ -42,6 +44,9 @@ class EditUser(BaseRequest):
                 }
             }
         )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doEditUser)
 
         args['permissions'] = newPermissions
         self.result['result'] = {
@@ -156,7 +161,11 @@ class Register(BaseRequest):
         if user:
             return self.response_failure(username + u'用户已存在')
 
-        self.createUser(username, password1)
+        userId = self.createUser(username, password1)
+
+        # 记录日志
+        LogDBOps.writeLog(userId, LogDBConfig.doRegister)
+
         self.response_success()
 
     def createUser(self, username, password):
@@ -191,6 +200,7 @@ class Register(BaseRequest):
             'token': Authentication.generateToken(userId)
         }
 
+        return userId
 
 class Login(BaseRequest):
     """
@@ -222,6 +232,9 @@ class Login(BaseRequest):
             'userObj': self.resUserData(user),
             'token': Authentication.generateToken(user['_id'])
         }
+
+        # 记录日志
+        LogDBOps.writeLog(user['_id'], LogDBConfig.doLogin)
 
         return self.response_success()
 

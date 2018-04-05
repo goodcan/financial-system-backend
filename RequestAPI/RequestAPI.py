@@ -33,4 +33,5 @@ HandleList = [
     (r'/api/addWorkClass', Order.AddWorkClass),
     (r'/api/editOrderOption', Order.EditOrderOption),
     (r'/api/contactUseTop10', Statistics.ContactUseTop10),
+    (r'/api/writeDownloadLog', Order.WriteDownloadLog),
 ]
