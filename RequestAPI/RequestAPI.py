@@ -8,6 +8,7 @@
 from core.account import Account
 from core.order import Order
 from core.statistics import Statistics
+from base.log import LogContent
 
 HandleList = [
     (r'/api/register', Account.Register),
@@ -36,4 +37,6 @@ HandleList = [
     (r'/api/writeDownloadLog', Order.WriteDownloadLog),
 
     (r'/api/contactUseTop10', Statistics.ContactUseTop10),
+
+    (r'/api/logList', LogContent.LogList),
 ]

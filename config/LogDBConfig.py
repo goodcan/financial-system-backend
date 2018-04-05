@@ -10,6 +10,8 @@ class LogDBConfig:
     """
         日志配置
     """
+    logListPageSize = 30
+
     doRegister = u'注册'
     doLogin = u'登录'
     doLogout = u'登出'
