@@ -307,7 +307,7 @@ class EditOrderStatus(BaseRequest):
 
         # 记录日志
         LogDBOps.writeLog(args['opsUserId'], logAction)
-
+        self.result['result'] = {'opsTime': nowString}
         return self.response_success(msg='订单状态修改成功！')
 
 
