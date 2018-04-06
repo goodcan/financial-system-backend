@@ -36,8 +36,8 @@ class LogDBOps(object):
         DBOps.insertDoc(DBCollonfig.log, data)
 
     @classmethod
-    def getlist(cls, page):
-        skip = (page - 1) * LogDBConfig.logListPageSize
+    def getlist(cls, page, pageSize):
+        skip = (page - 1) * pageSize
 
         # 条件搜搜参数
         params = [{
@@ -52,7 +52,7 @@ class LogDBOps(object):
         }, {
             '$skip': skip
         }, {
-            '$limit': LogDBConfig.logListPageSize
+            '$limit': pageSize
         }]
 
         searchLogs = DBOps.getAggregate(DBCollonfig.log, params)
@@ -75,7 +75,7 @@ class LogDBOps(object):
 
         res = {
             'page': page,
-            'pageSize': LogDBConfig.logListPageSize,
+            'pageSize': pageSize,
             'totalCount': totalCount,
             'logs': resLogs
         }

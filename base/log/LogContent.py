@@ -18,7 +18,8 @@ class LogList(BaseRequest):
         args = self.get_request_data()
 
         page = args['page']
+        pageSize = args['pageSize']
 
-        self.result['result'] = LogDBOps.getlist(page)
+        self.result['result'] = LogDBOps.getlist(page, pageSize)
 
         self.response_success()
