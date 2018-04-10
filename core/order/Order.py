@@ -680,9 +680,6 @@ class AddOrderContact(BaseRequest):
         args = self.get_request_data()
 
         createUser = args.get('createUser', None)
-        tel = args.get('tel', None)
-        email = args.get('email', None)
-        qq = args.get('qq', None)
         newContacts = args.get('contacts', None)
 
         error_list = []
@@ -702,6 +699,9 @@ class AddOrderContact(BaseRequest):
             return self.response_failure(msg=msg)
 
         for each in newContacts:
+            tel = each.get('tel', None)
+            email = each.get('email', None)
+            qq = each.get('qq', None)
             DBOps.setOneDoc(
                 DBCollonfig.options,
                 {'_id': DBCollonfig.orderOption},
