@@ -372,11 +372,16 @@ class OrderList(BaseRequest):
                 'status': search['status']
             })
 
+        if search['company'] != 'all':
+            searchParams.update({
+                'company': search['company']
+            })
+
         orders = []
         if args['orderListType'] == 'self':
             params = {'userId': userId}
-            params.update(searchParams)
-            orders = DBOps.getSomeDoc(DBCollonfig.orders, params)
+            searchParams.update(params)
+            orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
         elif args['orderListType'] == 'company':
             company = DBOps.getOneDoc(
                 DBCollonfig.users,
@@ -384,8 +389,8 @@ class OrderList(BaseRequest):
                 {'company': 1}
             )['company']
             params = {'company': company}
-            params.update(searchParams)
-            orders = DBOps.getSomeDoc(DBCollonfig.orders, params)
+            searchParams.update(params)
+            orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
         # elif args['orderListType'] == 'department':
         #     department = DBOps.getOneDoc(
         #         DBCollonfig.users,
