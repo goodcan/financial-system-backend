@@ -140,14 +140,14 @@ def updateUsersAndOrders():
     for user in users:
         if user.has_key('department'):
             user['company'] = updateData[user['department']]
-            # del user
+            del user['department']
             db['users'].update({'_id': user['_id']}, user)
 
     orders = db['orders'].find({})
     for order in orders:
         if order.has_key('department'):
             order['company'] = updateData[order['department']]
-            # del order
+            del order['department']
             db['orders'].update(
                 {'_id': order['_id']}, order
             )
@@ -164,4 +164,5 @@ def updateUserPms():
         db['users'].update({'_id': user['_id']}, {'$set': {'permissions': pms}})
 
 if __name__ == "__main__":
-    updateUserPms()
+    # updateUserPms()
+    updateUsersAndOrders()

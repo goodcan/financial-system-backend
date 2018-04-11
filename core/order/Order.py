@@ -139,7 +139,7 @@ class DownloadTable(BaseRequest):
         """
 
         header = [u'订单ID', u'名称', u'创建时间', u'创建人',
-                  u'部门', u'类目', u'客户', u'外包人员',
+                  u'所属公司', u'类目', u'客户', u'外包人员',
                   u'预算单价', u'预算数量', u'预算总金额（￥）',
                   u'实际单价', u'实际数量', u'实际总金额（￥）',
                   u'状态（1：制作中；2：待付款；3：已付款）',
@@ -153,7 +153,8 @@ class DownloadTable(BaseRequest):
                 order['title'].encode('gbk'),
                 order['createTime'],
                 order['createUser'].encode('gbk'),
-                order['department'].encode('gbk'),
+                # order['department'].encode('gbk'),
+                order['company'].encode('gbk'),
                 order['className'].encode('gbk'),
                 order['customerName'].encode('gbk'),
                 order['contactName'].encode('gbk'),
@@ -565,7 +566,7 @@ class DelOrderOption(BaseRequest):
         'classes': LogDBConfig.doDelClass,
         'customers': LogDBConfig.doDelCustomer,
         'contacts': LogDBConfig.doDelContact,
-        'departments': LogDBConfig.doDelDepartment,
+        # 'departments': LogDBConfig.doDelDepartment,
         'workClasses': LogDBConfig.doDelWorkClass,
         'companies': LogDBConfig.doDelCompany
     }
@@ -849,7 +850,7 @@ class AddWorkClass(BaseRequest):
                 DBCollonfig.options,
                 {
                     '_id': DBCollonfig.orderOption,
-                    'departments.name': each['name']
+                    'workClasses.name': each['name']
                 }
             )
             if isExist:
