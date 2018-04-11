@@ -367,6 +367,11 @@ class OrderList(BaseRequest):
             },
         }
 
+        if search['title']:
+            searchParams.update({
+                'title': {'$regex': search['title']}
+            })
+
         if search['status'] != -1:
             searchParams.update({
                 'status': search['status']
@@ -379,8 +384,7 @@ class OrderList(BaseRequest):
 
         orders = []
         if args['orderListType'] == 'self':
-            params = {'userId': userId}
-            searchParams.update(params)
+            searchParams.update({'userId': userId})
             orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
         elif args['orderListType'] == 'company':
             company = DBOps.getOneDoc(
@@ -388,8 +392,7 @@ class OrderList(BaseRequest):
                 {'_id': userId},
                 {'company': 1}
             )['company']
-            params = {'company': company}
-            searchParams.update(params)
+            searchParams.update({'company': company})
             orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
         # elif args['orderListType'] == 'department':
         #     department = DBOps.getOneDoc(
