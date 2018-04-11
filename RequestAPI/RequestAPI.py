@@ -43,4 +43,5 @@ HandleList = [
     (r'/api/logList', LogContent.LogList),
 
     (r'/api/getCustomerPopover', Popover.getCustomerPopover),
+    (r'/api/getContactPopover', Popover.getContactPopover),
 ]

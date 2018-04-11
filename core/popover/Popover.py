@@ -30,4 +30,27 @@ class getCustomerPopover(BaseRequest):
             self.result['result'] = customerData['customers'][0]
             self.response_success()
         else:
-            self.response_failure(msg='该客户已删除')
+            self.response_failure(msg=u'该客户已删除')
+
+
+class getContactPopover(BaseRequest):
+    """
+        获得客户的popover信息
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        customerData = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {
+                '_id': DBCollonfig.orderCustomer,
+                'contacts.name': args['contactName']
+            },
+            {'contacts.$': 1}
+        )
+        if customerData:
+            self.result['result'] = customerData['contacts'][0]
+            self.response_success()
+        else:
+            self.response_failure(msg=u'该外包已删除')
