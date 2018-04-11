@@ -274,7 +274,8 @@ class EditOrderStatus(BaseRequest):
                     'className': args['className'],
                     'customerName': args['customerName'],
                     'contactName': args['contactName'],
-                    'department': args['department'],
+                    # 'department': args['department'],
+                    'company': args['company'],
                     'desc': args['desc']
                 })
 
@@ -411,7 +412,8 @@ class CreateOrder(BaseRequest):
             'userId': args['userId'],
             'title': args['title'],
             'createUser': args['createUser'],
-            'department': args['department'],
+            # 'department': args['department'],
+            'company': args['company'],
             'className': args['className'],
             'customerName': args['customerName'],
             'contactName': args['contactName'],
@@ -463,7 +465,8 @@ class OrderInitData(BaseRequest):
         classes = orderOptions['classes']
         customers = orderOptions['customers']
         contacts = orderOptions['contacts']
-        departments = orderOptions['departments']
+        # departments = orderOptions['departments']
+        companies = orderOptions['companies']
         helpInfo = orderOptions['helpInfo']
 
         self.result['result'] = {
@@ -479,8 +482,8 @@ class OrderInitData(BaseRequest):
                     'value': _['name']
                 } for _ in contacts
             ],
-            'departments': [
-                {'label': _['name'], 'value': _['name']} for _ in departments
+            'companies': [
+                {'label': _['name'], 'value': _['name']} for _ in companies
             ],
             'helpInfo': helpInfo
         }
