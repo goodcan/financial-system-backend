@@ -36,7 +36,8 @@ class EditUser(BaseRequest):
             {'_id': args['_id']},
             {
                 '$set': {
-                    'department': args['department'],
+                    # 'department': args['department'],
+                    'company': args['company'],
                     'tel': args['tel'],
                     'email': args['email'],
                     'qq': args['qq'],
@@ -71,11 +72,11 @@ class EditUserInitData(BaseRequest):
             {'orders': 0}
         )
 
-        departments = DBOps.getOneDoc(
+        companies = DBOps.getOneDoc(
             DBCollonfig.options,
             {'_id': DBCollonfig.orderOption},
-            {'departments': 1}
-        )['departments']
+            {'companies': 1}
+        )['companies']
 
         user['setPermissions'] = [
             k for k, v in user['permissions'].iteritems() if v == 1
@@ -83,8 +84,8 @@ class EditUserInitData(BaseRequest):
 
         self.result['result'] = {
             'user': user,
-            'departments': [
-                {'label': _['name'], 'value': _['name']} for _ in departments
+            'companies': [
+                {'label': _['name'], 'value': _['name']} for _ in companies
             ],
             'permissions': [
                 {'key': k, 'label': v} for k, v in
@@ -188,7 +189,8 @@ class Register(BaseRequest):
             'createTime': now,
             'createTimeStamp': self.time_conversion(now, 1),
             'lastLogin': now,
-            'department': '',
+            # 'department': '',
+            'company': '',
             'tel': '',
             'email': '',
             'qq': ''

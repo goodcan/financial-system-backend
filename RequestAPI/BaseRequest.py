@@ -130,7 +130,7 @@ class BaseRequest(RequestHandler):
             'userId': user['_id'],
             'username': user['username'],
             'permissions': user['permissions'],
-            'department': user['department'],
+            'department': user['company'],
             'tel': user['tel']
         }
         return res
