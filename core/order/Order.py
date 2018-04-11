@@ -376,15 +376,24 @@ class OrderList(BaseRequest):
             params = {'userId': userId}
             params.update(searchParams)
             orders = DBOps.getSomeDoc(DBCollonfig.orders, params)
-        elif args['orderListType'] == 'department':
-            department = DBOps.getOneDoc(
+        elif args['orderListType'] == 'company':
+            company = DBOps.getOneDoc(
                 DBCollonfig.users,
                 {'_id': userId},
-                {'department': 1}
-            )['department']
-            params = {'department': department}
+                {'company': 1}
+            )['company']
+            params = {'company': company}
             params.update(searchParams)
             orders = DBOps.getSomeDoc(DBCollonfig.orders, params)
+        # elif args['orderListType'] == 'department':
+        #     department = DBOps.getOneDoc(
+        #         DBCollonfig.users,
+        #         {'_id': userId},
+        #         {'department': 1}
+        #     )['department']
+        #     params = {'department': department}
+        #     params.update(searchParams)
+        #     orders = DBOps.getSomeDoc(DBCollonfig.orders, params)
         elif args['orderListType'] == 'summary':
             orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
 

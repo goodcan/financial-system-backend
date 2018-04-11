@@ -9,8 +9,10 @@ class UserConfig:
     permissions = {
         'createOrder': u'创建订单',
         'editSelfOrder': u'修改自己创建的订单',
-        'readDptOrder': u'查看自己部门的订单',
-        'editDptOrder': u'修改自己部门的订单',
+        # 'readDptOrder': u'查看自己部门的订单',
+        # 'editDptOrder': u'修改自己部门的订单',
+        'readCompanyOrder': u'查看所属公司的订单',
+        'editCompanyOrder': u'修改所属公司的订单',
         'editAllOrder': u'修改所有订单',
         'editOrderOption': u'编辑订单选项',
         'editUser': u'管理用户',

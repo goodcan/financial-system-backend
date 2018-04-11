@@ -152,5 +152,16 @@ def updateUsersAndOrders():
                 {'_id': order['_id']}, order
             )
 
+def updateUserPms():
+    db = get_connect_db()
+    users = db['users'].find({})
+    for user in users:
+        pms = user['permissions']
+        pms['readCompanyOrder'] = pms['readDptOrder']
+        pms['editCompanyOrder'] = pms['editDptOrder']
+        del pms['readDptOrder']
+        del pms['editDptOrder']
+        db['users'].update({'_id': user['_id']}, {'$set': {'permissions': pms}})
+
 if __name__ == "__main__":
-    updateUsersAndOrders()
+    updateUserPms()
