@@ -4,8 +4,27 @@
 # @Author   : cancan
 # @File     : initData.py
 # @Function : 清理数据结构
+from pymongo import MongoClient
 
 from base.db.DBManger import DBManager
+
+def get_connect_db(db_type=1):
+    if db_type == 2:
+        HOST = '122.152.192.158'
+        PORT = 27017
+    else:
+        HOST = '127.0.0.1'
+        PORT = 27017
+
+    username = 'admin'
+    password = 'szx0982'
+
+    client = MongoClient(HOST, PORT)
+
+    dbAuth = client.szx_admin
+    dbAuth.authenticate(username, password)
+
+    return client.szx_admin
 
 
 def clearUserData():
@@ -100,7 +119,16 @@ def addOrderPrice():
             }}
         )
 
+def updateContacts():
+    db = get_connect_db(2)
 
+    contacts = db['options'].find_one({'_id': 2001}, {'contacts': 1})['contacts']
+
+    for i, v in enumerate(contacts):
+        v['realName'] = ''
+        contacts[i] = v
+
+    db['options'].update({'_id': 2001}, {'$set': {'contacts': contacts}})
 
 if __name__ == "__main__":
-    editUserPms()
+    updateContacts()

@@ -40,14 +40,25 @@ class EditOrderOption(BaseRequest):
         createUser = args['createUser']
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if args['optionType'] == 'contacts':
+            oldContact = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderContact,
+                    'contacts.name': option['oldName']
+                }
+            )
+            if not oldContact:
+                return self.response_failure(msg=u'外包人员不存在')
             DBOps.setOneDoc(
                 DBCollonfig.options,
                 {
                     '_id': DBCollonfig.orderContact,
-                    'contacts.name': option['name']
+                    'contacts.name': option['oldName']
                 },
                 {
                     '$set': {
+                        'contacts.$.name': option['name'],
+                        'contacts.$.realName': option['realName'],
                         'contacts.$.tel': option['tel'],
                         'contacts.$.email': option['email'],
                         'contacts.$.workClass': option['workClass'],
@@ -699,9 +710,6 @@ class AddOrderContact(BaseRequest):
             return self.response_failure(msg=msg)
 
         for each in newContacts:
-            tel = each.get('tel', None)
-            email = each.get('email', None)
-            qq = each.get('qq', None)
             DBOps.setOneDoc(
                 DBCollonfig.options,
                 {'_id': DBCollonfig.orderOption},
@@ -709,14 +717,15 @@ class AddOrderContact(BaseRequest):
                     '$push': {
                         'contacts': {
                             'name': each['name'],
+                            'realName': each['realName'],
                             'createTime': self.time_conversion(
                                 each['time'], 2
                             ),
                             'createTimeStamp': each['time'],
                             'createUser': createUser,
-                            'tel': tel,
-                            'email': email,
-                            'qq': qq,
+                            'tel': each['tel'],
+                            'email': each['email'],
+                            'qq': each['qq'],
                             'payInfo': each['payInfo'],
                             'workClass': each['workClass']
                         }
