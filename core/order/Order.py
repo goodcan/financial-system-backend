@@ -406,9 +406,17 @@ class OrderList(BaseRequest):
         elif args['orderListType'] == 'summary':
             orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
 
+        page = args.get('page', 1)
+        pageSize = args.get('pageSize', 50)
+        skip = (page - 1) * pageSize
+        resOrders = orders.sort('createTimeStamp', -1).skip(skip).limit(pageSize)
+
         self.result['result'] = {
-            'orders': self.orderListByTime(orders),
-            'searchDate': [startDate.split(' ')[0], endDate.split(' ')[0]]
+            # 'orders': self.orderListByTime(orders),
+            'orders': list(resOrders),
+            'searchDate': [startDate.split(' ')[0], endDate.split(' ')[0]],
+            'pageSize': pageSize,
+            'totalCount': orders.count()
         }
         return self.response_success()
 
