@@ -36,6 +36,9 @@ class LogDBConfig:
     doCreateDepartment = u'新增部门'
     doDelDepartment = u'删除部门'
 
+    doCreateCompany = u'新增公司'
+    doDelCompany = u'删除公司'
+
     doEditHelpInfo = u'修改帮助信息'
 
     doCreateWorkClass = u'新增外包技能'

@@ -21,7 +21,8 @@ HandleList = [
 
     (r'/api/addOrderClass', Order.AddOrderClass),
     (r'/api/addOrderCustomer', Order.AddOrderCustomer),
-    (r'/api/addOrderDpt', Order.AddOrderDpt),
+    # (r'/api/addOrderDpt', Order.AddOrderDpt),
+    (r'/api/addOrderCompany', Order.AddOrderCompany),
     (r'/api/orderInitData', Order.OrderInitData),
     (r'/api/addOrderContact', Order.AddOrderContact),
     (r'/api/createOrder', Order.CreateOrder),

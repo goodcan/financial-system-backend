@@ -554,7 +554,8 @@ class DelOrderOption(BaseRequest):
         'customers': LogDBConfig.doDelCustomer,
         'contacts': LogDBConfig.doDelContact,
         'departments': LogDBConfig.doDelDepartment,
-        'workClasses': LogDBConfig.doDelWorkClass
+        'workClasses': LogDBConfig.doDelWorkClass,
+        'companies': LogDBConfig.doDelCompany
     }
 
     def handler_function(self):
@@ -868,3 +869,55 @@ class AddWorkClass(BaseRequest):
         LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateWorkClass)
 
         return self.response_success()
+
+class AddOrderCompany(BaseRequest):
+    """
+        添加订单部门选项
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        createUser = args.get('createUser', None)
+        newCompanies = args.get('companies', None)
+
+        error_list = []
+        for each in newCompanies:
+            isExist = DBOps.getOneDoc(
+                DBCollonfig.options,
+                {
+                    '_id': DBCollonfig.orderOption,
+                    'companies.name': each['name']
+                }
+            )
+            if isExist:
+                error_list.append(each['name'])
+
+        if error_list:
+            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            return self.response_failure(msg=msg)
+
+        for each in newCompanies:
+            DBOps.setOneDoc(
+                DBCollonfig.options,
+                {'_id': DBCollonfig.orderOption},
+                {
+                    '$push': {
+                        'companies': {
+                            'name': each['name'],
+                            'createTime': self.time_conversion(
+                                each['time'], 2
+                            ),
+                            'createTimeStamp': each['time'],
+                            'createUser': createUser,
+                        }
+                    }
+                }
+            )
+
+        # 记录日志
+        LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateCompany)
+
+        return self.response_success()
+
+

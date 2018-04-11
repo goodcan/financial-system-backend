@@ -120,7 +120,7 @@ def addOrderPrice():
         )
 
 def updateContacts():
-    db = get_connect_db(2)
+    db = get_connect_db()
 
     contacts = db['options'].find_one({'_id': 2001}, {'contacts': 1})['contacts']
 
@@ -130,5 +130,27 @@ def updateContacts():
 
     db['options'].update({'_id': 2001}, {'$set': {'contacts': contacts}})
 
+def updateUsersAndOrders():
+    updateData = {
+        u'游戏': u'十字星信息服务',
+        u'漫画': u'十字星文化创意'
+    }
+    db = get_connect_db()
+    users = db['users'].find({})
+    for user in users:
+        if user.has_key('department'):
+            user['company'] = updateData[user['department']]
+            # del user
+            db['users'].update({'_id': user['_id']}, user)
+
+    orders = db['orders'].find({})
+    for order in orders:
+        if order.has_key('department'):
+            order['company'] = updateData[order['department']]
+            # del order
+            db['orders'].update(
+                {'_id': order['_id']}, order
+            )
+
 if __name__ == "__main__":
-    updateContacts()
+    updateUsersAndOrders()
