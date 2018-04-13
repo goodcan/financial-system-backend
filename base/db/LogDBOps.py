@@ -81,7 +81,7 @@ class LogDBOps(object):
                     'userId': int(logType)
                 }
             })
-        params = [{'$group': {'_id': None, 'count': {'$sum': 1}}}]
+        params.append({'$group': {'_id': None, 'count': {'$sum': 1}}})
 
         totalCount = list(
             DBOps.getAggregate(DBCollonfig.log, params)
