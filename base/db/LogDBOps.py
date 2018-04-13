@@ -40,7 +40,16 @@ class LogDBOps(object):
         skip = (page - 1) * pageSize
 
         # 条件搜搜参数
-        params = [{
+        params = []
+
+        if logType != 'all':
+            params.append({
+                '$match': {
+                    'userId': int(logType)
+                }
+            })
+
+        params.extend([{
             '$lookup': {
                 'from': "users",
                 'localField': "userId",
@@ -53,14 +62,7 @@ class LogDBOps(object):
             '$skip': skip
         }, {
             '$limit': pageSize
-        }]
-
-        if logType != 'all':
-            params.append({
-                '$match': {
-                    'userId': int(logType)
-                }
-            })
+        }])
 
         searchLogs = DBOps.getAggregate(DBCollonfig.log, params)
 
