@@ -75,6 +75,12 @@ class LogDBOps(object):
 
         # 求和搜索参数
         params = [{'$group': {'_id': None, 'count': {'$sum': 1}}}]
+        if logType != 'all':
+            params.append({
+                '$match': {
+                    'userId': int(logType)
+                }
+            })
 
         totalCount = list(
             DBOps.getAggregate(DBCollonfig.log, params)
