@@ -4,6 +4,7 @@
 # @Author   : cancan
 # @File     : Account.py
 # @Function : 注册
+import re
 from datetime import datetime
 
 from RequestAPI.BaseRequest import BaseRequest
@@ -156,6 +157,12 @@ class Register(BaseRequest):
 
         if password1 != password2:
             return self.response_failure(username + u'两次密码不一致')
+
+        if re.findall(' ', username):
+            return self.response_failure(u'账号不能有空格符号')
+
+        if re.findall(' ', password1):
+            return self.response_failure(u'密码不能有空格符号')
 
         user = DBOps.getOneDoc(DBCollonfig.users, {'username': username})
 
