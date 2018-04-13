@@ -350,37 +350,7 @@ class OrderList(BaseRequest):
 
         userId = self.getUserIdByToken()
 
-        search = args['search']
-        if search['date']:
-            startDate = search['date'][0] + ' 00:00:00'
-            endDate = search['date'][1] + ' 23:59:59'
-        else:
-            now = datetime.now()
-            endDate = now.strftime('%Y-%m-%d') + ' 23:59:59'
-            startDate = (now - timedelta(days=15)).strftime('%Y-%m-%d') + \
-                        ' 00:00:00'
-
-        searchParams = {
-            'createTimeStamp': {
-                '$gte': self.time_conversion(startDate, 1),
-                '$lte': self.time_conversion(endDate, 1)
-            },
-        }
-
-        if search['title']:
-            searchParams.update({
-                'title': {'$regex': search['title']}
-            })
-
-        if search['status'] != -1:
-            searchParams.update({
-                'status': search['status']
-            })
-
-        if search['company'] != 'all':
-            searchParams.update({
-                'company': search['company']
-            })
+        startDate, endDate, searchParams = self.getSearchParams(args['search'])
 
         orders = None
         if args['orderListType'] == 'self':
@@ -412,6 +382,59 @@ class OrderList(BaseRequest):
             'totalCount': orders.count()
         }
         return self.response_success()
+
+    def getSearchParams(self, search):
+        """
+            生成筛选条件
+        """
+        if search['date']:
+            startDate = search['date'][0] + ' 00:00:00'
+            endDate = search['date'][1] + ' 23:59:59'
+        else:
+            now = datetime.now()
+            endDate = now.strftime('%Y-%m-%d') + ' 23:59:59'
+            startDate = (now - timedelta(days=15)).strftime('%Y-%m-%d') + \
+                        ' 00:00:00'
+
+        # 订单创建日期
+        searchParams = {
+            'createTimeStamp': {
+                '$gte': self.time_conversion(startDate, 1),
+                '$lte': self.time_conversion(endDate, 1)
+            },
+        }
+
+        # 订单名称
+        if search['title']:
+            searchParams.update({
+                'title': {'$regex': search['title']}
+            })
+
+        # 订单状态
+        if search['status'] != -1:
+            searchParams.update({
+                'status': search['status']
+            })
+
+        # 订单所属公司
+        if search['company'] != 'all':
+            searchParams.update({
+                'company': search['company']
+            })
+
+        # 订单客户
+        if search['customer'] != 'all':
+            searchParams.update({
+                'customerName': search['customer']
+            })
+
+        # 订单外包人员
+        if search['contact'] != 'all':
+            searchParams.update({
+                'contactName': search['contact']
+            })
+
+        return startDate, endDate, searchParams
 
 
 class CreateOrder(BaseRequest):
