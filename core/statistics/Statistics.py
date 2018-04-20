@@ -16,11 +16,21 @@ class ContactUseTop10(BaseRequest):
     """
 
     def handler_function(self):
-        params = [{
+        args = self.get_request_data()
+        userType = args.get('userType', None)
+        params = []
+
+        if userType and userType != 'all':
+            params.append({
+                '$match': {
+                    'userId': int(userType)
+                }
+            })
+        params.extend([{
             '$group': {'_id': '$contactName', 'num': {'$sum': 1}}
         }, {
             '$sort': {'num': -1}
-        }]
+        }])
         top10Contacts = list(DBOps.getAggregate(DBCollonfig.orders, params))
 
         if top10Contacts:
