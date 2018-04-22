@@ -17,6 +17,23 @@ from base.db.LogDBOps import LogDBOps
 from config.LogDBConfig import LogDBConfig
 
 
+class SetNavCollapse(BaseRequest):
+    """
+        设置左侧导航栏折叠
+    """
+
+    def handler_function(self):
+        args = self.get_request_data()
+
+        DBOps.setOneDoc(
+            DBCollonfig.users,
+            {'_id': args['userId']},
+            {'$set': {'navCollapse': args['userId']}}
+        )
+
+        self.response_success()
+
+
 class EditUser(BaseRequest):
     """
         用户信息设置

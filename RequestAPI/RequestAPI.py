@@ -19,10 +19,10 @@ HandleList = [
     (r'/api/editUser', Account.EditUser),
     (r'/api/registerInitData', Account.RegisterIinitData),
     (r'/api/editUserInitData', Account.EditUserInitData),
+    (r'/api/setNavCollapse', Account.SetNavCollapse),
 
     (r'/api/addOrderClass', Order.AddOrderClass),
     (r'/api/addOrderCustomer', Order.AddOrderCustomer),
-    # (r'/api/addOrderDpt', Order.AddOrderDpt),
     (r'/api/addOrderCompany', Order.AddOrderCompany),
     (r'/api/orderInitData', Order.OrderInitData),
     (r'/api/addOrderContact', Order.AddOrderContact),
