@@ -132,6 +132,7 @@ class BaseRequest(RequestHandler):
             'permissions': user['permissions'],
             # 'department': user['department'],
             'company': user['company'],
-            'tel': user['tel']
+            'tel': user['tel'],
+            'navCollapse': user.get('navCollapse', None)
         }
         return res

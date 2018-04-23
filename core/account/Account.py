@@ -28,7 +28,7 @@ class SetNavCollapse(BaseRequest):
         DBOps.setOneDoc(
             DBCollonfig.users,
             {'_id': args['userId']},
-            {'$set': {'navCollapse': args['userId']}}
+            {'$set': {'navCollapse': args['setCollapse']}}
         )
 
         self.response_success()
