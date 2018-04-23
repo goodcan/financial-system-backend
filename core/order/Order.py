@@ -539,12 +539,55 @@ class OrderOptionInitData(BaseRequest):
         )[args['optionType']]
 
         if args['optionType'] == 'contacts':
+            self.result['result'] = self.initContactsData(args, initData)
+        elif args['optionType'] == 'customers':
+            self.result['result'] = self.initCustomersData(args, initData)
+        else:
+            self.result['result'] = self.orderListByTime(initData)
+        return self.response_success()
 
-            # 搜索删选
-            keyName = args['keyName']
-            workClass = args['workClass']
-            orderContacts = self.orderListByTime(initData)
+    def initCustomersData(self, args, initData):
+        """
+            初始化客户信息
+        """
+        # 搜索删选
+        keyName = args['keyName']
+        orderCustomers = self.orderListByTime(initData)
 
+        if keyName:
+            try:
+                totalCustomers = [
+                    _ for _ in orderCustomers
+                    if re.match(r'.*' + keyName + '.*', _['name'])
+                ]
+            except Exception as e:
+                totalCustomers = []
+        else:
+            totalCustomers = orderCustomers
+
+        page = args['page']
+        pageSize = OrderConfig.optionPageSize
+        pageStart = (page - 1) * pageSize
+        pageEnd = page * pageSize
+        customers = totalCustomers[pageStart:pageEnd]
+
+        return {
+            'customers': customers,
+            'totalCount': len(totalCustomers),
+            'pageSize': OrderConfig.optionPageSize
+        }
+
+    def initContactsData(self, args, initData):
+        """
+            初始化外包人员信息
+        """
+
+        # 搜索删选
+        keyName = args['keyName']
+        workClass = args['workClass']
+        orderContacts = self.orderListByTime(initData)
+
+        if keyName or workClass:
             try:
                 totalContacts = [
                     _ for _ in orderContacts
@@ -553,31 +596,31 @@ class OrderOptionInitData(BaseRequest):
                 ]
             except Exception as e:
                 totalContacts = []
-
-            # 分页处理
-            page = args['page']
-            pageSize = OrderConfig.optionPageSize
-            pageStart = (page - 1) * pageSize
-            pageEnd = page * pageSize
-            contacts = totalContacts[pageStart:pageEnd]
-
-            workClasses = DBOps.getOneDoc(
-                DBCollonfig.options,
-                {'_id': DBCollonfig.orderOption},
-                {'workClasses': 1}
-            )['workClasses']
-            self.result['result'] = {
-                'contacts': contacts,
-                'totalCount': len(totalContacts),
-                'pageSize': OrderConfig.optionPageSize,
-                'workClasses': [
-                    {'label': _['name'], 'value': _['name']}
-                    for _ in workClasses
-                ],
-            }
         else:
-            self.result['result'] = self.orderListByTime(initData)
-        return self.response_success()
+            totalContacts = orderContacts
+
+        # 分页处理
+        page = args['page']
+        pageSize = OrderConfig.optionPageSize
+        pageStart = (page - 1) * pageSize
+        pageEnd = page * pageSize
+        contacts = totalContacts[pageStart:pageEnd]
+
+        workClasses = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderOption},
+            {'workClasses': 1}
+        )['workClasses']
+
+        return {
+            'contacts': contacts,
+            'totalCount': len(totalContacts),
+            'pageSize': OrderConfig.optionPageSize,
+            'workClasses': [
+                {'label': _['name'], 'value': _['name']}
+                for _ in workClasses
+            ],
+        }
 
 
 class DelOrderOption(BaseRequest):
@@ -589,7 +632,6 @@ class DelOrderOption(BaseRequest):
         'classes': LogDBConfig.doDelClass,
         'customers': LogDBConfig.doDelCustomer,
         'contacts': LogDBConfig.doDelContact,
-        # 'departments': LogDBConfig.doDelDepartment,
         'workClasses': LogDBConfig.doDelWorkClass,
         'companies': LogDBConfig.doDelCompany
     }
@@ -906,6 +948,7 @@ class AddWorkClass(BaseRequest):
 
         return self.response_success()
 
+
 class AddOrderCompany(BaseRequest):
     """
         添加订单部门选项
@@ -955,5 +998,3 @@ class AddOrderCompany(BaseRequest):
         LogDBOps.writeLog(args['opsUserId'], LogDBConfig.doCreateCompany)
 
         return self.response_success()
-
-
