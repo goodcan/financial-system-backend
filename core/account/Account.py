@@ -100,6 +100,11 @@ class EditUserInitData(BaseRequest):
             k for k, v in user['permissions'].iteritems() if v == 1
         ]
 
+        user['pmsListName'] = [
+            UserConfig.permissions[k]
+            for k, v in user['permissions'].iteritems() if v == 1
+        ]
+
         self.result['result'] = {
             'user': user,
             'companies': [
