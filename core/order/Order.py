@@ -18,6 +18,9 @@ from base.db.LogDBOps import LogDBOps
 from config.LogDBConfig import LogDBConfig
 from config.Setting import DATETIME_FORMATE
 from core.account.AccountMsg import AccountMsg
+from base.time.TimeUtil import TimeUtil
+from core.order.OrderUtil import OrderUtil
+from base.authentication.AuthenticationUtil import AuthenticationUtil
 
 
 class WriteDownloadLog(BaseRequest):
@@ -68,7 +71,7 @@ class EditOrderOption(BaseRequest):
                         'contacts.$.qq': option['qq'],
                         'contacts.$.createUser': createUser,
                         'contacts.$.createTime': now,
-                        'contacts.$.createTimeStamp': self.time_conversion(
+                        'contacts.$.createTimeStamp': TimeUtil.time_conversion(
                             now, 1
                         ),
                     }
@@ -92,7 +95,7 @@ class EditOrderOption(BaseRequest):
                         'customers.$.mailAddress': option['mailAddress'],
                         'customers.$.createUser': createUser,
                         'customers.$.createTime': now,
-                        'customers.$.createTimeStamp': self.time_conversion(
+                        'customers.$.createTimeStamp': TimeUtil.time_conversion(
                             now, 1
                         ),
                     }
@@ -326,7 +329,7 @@ class EditOrderStatus(BaseRequest):
             'status': setStatus,
             'completeTime': nowString,
             'paymentTime': '',
-            'completeTimeStamp': self.time_conversion(nowString, 1),
+            'completeTimeStamp': TimeUtil.time_conversion(nowString, 1),
             'paymentTimeStamp': 0,
             'price': args['price'],
             'tax': args['tax'],
@@ -343,7 +346,7 @@ class EditOrderStatus(BaseRequest):
         setParams = {
             'status': setStatus,
             'paymentTime': nowString,
-            'paymentTimeStamp': self.time_conversion(nowString, 1)
+            'paymentTimeStamp': TimeUtil.time_conversion(nowString, 1)
         }
 
         return setParams
@@ -373,7 +376,7 @@ class OrderList(BaseRequest):
     def handler_function(self):
         args = self.get_request_data()
 
-        userId = self.getUserIdByToken()
+        userId = AuthenticationUtil.getUserIdByToken(self.request)
 
         startDate, endDate, searchParams = self.getSearchParams(args['search'])
 
@@ -415,8 +418,8 @@ class OrderList(BaseRequest):
         # 订单创建日期
         searchParams = {
             'createTimeStamp': {
-                '$gte': self.time_conversion(startDate, 1),
-                '$lte': self.time_conversion(endDate, 1)
+                '$gte': TimeUtil.time_conversion(startDate, 1),
+                '$lte': TimeUtil.time_conversion(endDate, 1)
             },
         }
 
@@ -494,7 +497,7 @@ class CreateOrder(BaseRequest):
             'createTime': nowString,
             'completeTime': '',
             'paymentTime': '',
-            'createTimeStamp': self.time_conversion(nowString, 1),
+            'createTimeStamp': TimeUtil.time_conversion(nowString, 1),
             'completeTimeStamp': 0,
             'paymentTimeStamp': 0,
             'status': 1,
@@ -523,7 +526,6 @@ class OrderInitData(BaseRequest):
         classes = orderOptions['classes']
         customers = orderOptions['customers']
         contacts = orderOptions['contacts']
-        # departments = orderOptions['departments']
         companies = orderOptions['companies']
         helpInfo = orderOptions['helpInfo']
 
@@ -568,7 +570,7 @@ class OrderOptionInitData(BaseRequest):
         elif args['optionType'] == 'customers':
             self.result['result'] = self.initCustomersData(args, initData)
         else:
-            self.result['result'] = self.orderListByTime(initData)
+            self.result['result'] = OrderUtil.orderListByTime(initData)
         return self.response_success()
 
     def initCustomersData(self, args, initData):
@@ -577,7 +579,7 @@ class OrderOptionInitData(BaseRequest):
         """
         # 搜索删选
         keyName = args['keyName']
-        orderCustomers = self.orderListByTime(initData)
+        orderCustomers = OrderUtil.orderListByTime(initData)
 
         if keyName:
             try:
@@ -610,7 +612,7 @@ class OrderOptionInitData(BaseRequest):
         # 搜索删选
         keyName = args['keyName']
         workClass = args['workClass']
-        orderContacts = self.orderListByTime(initData)
+        orderContacts = OrderUtil.orderListByTime(initData)
 
         if keyName or workClass:
             try:
@@ -717,7 +719,7 @@ class AddOrderClass(BaseRequest):
                     '$push': {
                         'classes': {
                             'name': each['name'],
-                            'createTime': self.time_conversion(
+                            'createTime': TimeUtil.time_conversion(
                                 each['time'], 2
                             ),
                             'createTimeStamp': each['time'],
@@ -770,7 +772,7 @@ class AddOrderCustomer(BaseRequest):
                             'name': each['name'],
                             'billInfo': each['billInfo'],
                             'mailAddress': each['mailAddress'],
-                            'createTime': self.time_conversion(
+                            'createTime': TimeUtil.time_conversion(
                                 each['time'], 2
                             ),
                             'createTimeStamp': each['time'],
@@ -822,7 +824,7 @@ class AddOrderContact(BaseRequest):
                         'contacts': {
                             'name': each['name'],
                             'realName': each['realName'],
-                            'createTime': self.time_conversion(
+                            'createTime': TimeUtil.time_conversion(
                                 each['time'], 2
                             ),
                             'createTimeStamp': each['time'],
@@ -878,7 +880,7 @@ class AddOrderDpt(BaseRequest):
                     '$push': {
                         'departments': {
                             'name': each['name'],
-                            'createTime': self.time_conversion(
+                            'createTime': TimeUtil.time_conversion(
                                 each['time'], 2
                             ),
                             'createTimeStamp': each['time'],
@@ -911,7 +913,7 @@ class AddOrderHelpInfo(BaseRequest):
                     'helpInfo': [{
                         'content': args['helpInfo'],
                         'createTime': now,
-                        'createTimeStamp': self.time_conversion(now, 1)
+                        'createTimeStamp': TimeUtil.time_conversion(now, 1)
                     }]
                 }
             }
@@ -958,7 +960,7 @@ class AddWorkClass(BaseRequest):
                     '$push': {
                         'workClasses': {
                             'name': each['name'],
-                            'createTime': self.time_conversion(
+                            'createTime': TimeUtil.time_conversion(
                                 each['time'], 2
                             ),
                             'createTimeStamp': each['time'],
@@ -1009,7 +1011,7 @@ class AddOrderCompany(BaseRequest):
                     '$push': {
                         'companies': {
                             'name': each['name'],
-                            'createTime': self.time_conversion(
+                            'createTime': TimeUtil.time_conversion(
                                 each['time'], 2
                             ),
                             'createTimeStamp': each['time'],

@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 # @Time     : 2018/4/30 下午5:19
 # @Author   : cancan
-# @File     : TimeConversion.py
+# @File     : TimeUtil.py
 # @Function : 时间处理
 
 import time
 
 
-class TimeConversion(object):
+class TimeUtil(object):
     """
         时间处理类
     """

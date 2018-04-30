@@ -10,7 +10,7 @@ from copy import deepcopy
 from base.db.DBOps import DBOps
 from config.Setting import DATETIME_FORMATE
 from config.DBCollConfig import DBCollonfig
-from base.time.TimeConversion import TimeConversion
+from base.time.TimeUtil import TimeUtil
 
 
 class AccountMsg(object):
@@ -61,7 +61,7 @@ class AccountMsg(object):
         msg['sendUserId'] = content['sendUserId']
         msg['rcvUserId'] = content['rcvUserId']
         msg['sendTime'] = datetime.now().strftime(DATETIME_FORMATE)
-        msg['sendTimeStamp'] = TimeConversion.time_conversion(
+        msg['sendTimeStamp'] = TimeUtil.time_conversion(
             msg['sendTime'], 1
         )
         msg['type'] = 'order'

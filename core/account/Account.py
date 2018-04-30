@@ -15,6 +15,9 @@ from config.DBCollConfig import DBCollonfig
 from config.UserConfig import UserConfig
 from base.db.LogDBOps import LogDBOps
 from config.LogDBConfig import LogDBConfig
+from base.time.TimeUtil import TimeUtil
+from core.account.AccountUtil import AccountUtil
+from core.order.OrderUtil import OrderUtil
 
 
 class SetNavCollapse(BaseRequest):
@@ -69,7 +72,7 @@ class EditUser(BaseRequest):
 
         args['permissions'] = newPermissions
         self.result['result'] = {
-            'userObj': self.resUserData(args)
+            'userObj': AccountUtil.resUserData(args)
         }
         return self.response_success(msg=args['username'] + u'用户信息设置成功!')
 
@@ -137,7 +140,7 @@ class UserList(BaseRequest):
             })
             userList.append(user)
 
-        self.result['result'] = self.orderListByTime(userList, reverse=False)
+        self.result['result'] = OrderUtil.orderListByTime(userList, reverse=False)
         return self.response_success()
 
 
@@ -216,7 +219,7 @@ class Register(BaseRequest):
             'password': Encrypt.password_encrypt(password),
             'permissions': {_: 0 for _ in UserConfig.permissions},
             'createTime': now,
-            'createTimeStamp': self.time_conversion(now, 1),
+            'createTimeStamp': TimeUtil.time_conversion(now, 1),
             'lastLogin': now,
             # 'department': '',
             'company': '',
@@ -228,7 +231,7 @@ class Register(BaseRequest):
         DBOps.insertDoc(DBCollonfig.users, user)
 
         self.result['result'] = {
-            'userObj': self.resUserData(user),
+            'userObj': AccountUtil.resUserData(user),
             'token': Authentication.generateToken(userId)
         }
 
@@ -262,7 +265,7 @@ class Login(BaseRequest):
         )
 
         self.result['result'] = {
-            'userObj': self.resUserData(user),
+            'userObj': AccountUtil.resUserData(user),
             'token': Authentication.generateToken(user['_id'])
         }
 
@@ -295,7 +298,7 @@ class checkLogin(BaseRequest):
                 )
 
                 self.result['result'] = {
-                    'userObj': self.resUserData(user)
+                    'userObj': AccountUtil.resUserData(user)
                 }
 
                 return self.response_success()
