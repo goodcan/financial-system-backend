@@ -44,7 +44,7 @@ class AccountMsg(object):
                 },
                 multi=True
             )
-        elif status == 3:
+        elif status == 3 or status == 1:
             DBOps.setOneDoc(
                 DBCollonfig.users,
                 {'_id': msg['rcvUserId']},

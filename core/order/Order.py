@@ -252,6 +252,16 @@ class EditOrderStatus(BaseRequest):
         if setStatus == 1:
             setParams = self.setStatus1(setStatus, args)
             logAction = LogDBConfig.doEditOrder
+            if args['opsUserId'] != args['userId']:
+                content = {
+                    'status': setStatus,
+                    'sendUserId': args['opsUserId'],
+                    'rcvUserId': args['userId'],
+                    'orderTitle': args['title'],
+                    'createUser': args['createUser']
+                }
+                AccountMsg.setOrderMsg(content)
+
         elif setStatus == 2:
             setParams = self.setStatus2(setStatus, nowString, args)
             logAction = LogDBConfig.doCompleteOrder
@@ -263,17 +273,19 @@ class EditOrderStatus(BaseRequest):
                 'createUser': args['createUser']
             }
             AccountMsg.setOrderMsg(content)
+
         elif setStatus == 3:
             setParams = self.setStatus3(setStatus, nowString)
             logAction = LogDBConfig.doPaymentOrder
-            content = {
-                'status': setStatus,
-                'sendUserId': args['opsUserId'],
-                'rcvUserId': args['userId'],
-                'orderTitle': args['title'],
-                'createUser': args['createUser']
-            }
-            AccountMsg.setOrderMsg(content)
+            if args['opsUserId'] != args['userId']:
+                content = {
+                    'status': setStatus,
+                    'sendUserId': args['opsUserId'],
+                    'rcvUserId': args['userId'],
+                    'orderTitle': args['title'],
+                    'createUser': args['createUser']
+                }
+                AccountMsg.setOrderMsg(content)
 
         DBOps.setOneDoc(
             DBCollonfig.orders,
