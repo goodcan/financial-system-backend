@@ -16,6 +16,8 @@ from config.DBCollConfig import DBCollonfig
 from config.OrderConfig import OrderConfig
 from base.db.LogDBOps import LogDBOps
 from config.LogDBConfig import LogDBConfig
+from config.Setting import DATETIME_FORMATE
+from core.account.AccountMsg import AccountMsg
 
 
 class WriteDownloadLog(BaseRequest):
@@ -242,75 +244,33 @@ class EditOrderStatus(BaseRequest):
 
         logAction = None
 
-        nowString = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        nowString = datetime.now().strftime(DATETIME_FORMATE)
         setParams = {}
         if setStatus == 1:
-            setParams = {
-                'status': setStatus,
-                'completeTime': '',
-                'paymentTime': '',
-                'completeTimeStamp': 0,
-                'paymentTimeStamp': 0,
-                'expect': {
-                    'price': args['price'],
-                    'tax': args['tax'],
-                    'num': args['num'],
-                    'unit': args['unit'],
-                    'unitNum': args['unitNum'],
-                    'sumPrice': round(args['sumPrice'], 2),
-                },
-                'price': args['price'],
-                'tax': args['tax'],
-                'num': args['num'],
-                'unit': args['unit'],
-                'unitNum': args['unitNum'],
-                'sumPrice': round(args['sumPrice'], 2),
-                'evaluation': 0
-            }
-
-            # 订单统计用户修改订单其他信息
-            if args.get('isCanEdit', ''):
-                setParams.update({
-                    'title': args['title'],
-                    'className': args['className'],
-                    'customerName': args['customerName'],
-                    'contactName': args['contactName'],
-                    # 'department': args['department'],
-                    'company': args['company'],
-                    'desc': args['desc']
-                })
-
-            # 记录日志时的操作说明
+            setParams = self.setStatus1(setStatus, args)
             logAction = LogDBConfig.doEditOrder
-
         elif setStatus == 2:
-            setParams = {
-                'status': setStatus,
-                'completeTime': nowString,
-                'paymentTime': '',
-                'completeTimeStamp': self.time_conversion(nowString, 1),
-                'paymentTimeStamp': 0,
-                'price': args['price'],
-                'tax': args['tax'],
-                'num': args['num'],
-                'unit': args['unit'],
-                'unitNum': args['unitNum'],
-                'evaluation': args['evaluation'],
-                'sumPrice': round(args['sumPrice'], 2)
-            }
-
-            # 记录日志时的操作说明
+            setParams = self.setStatus2(setStatus, nowString, args)
             logAction = LogDBConfig.doCompleteOrder
-
-        elif setStatus == 3:
-            setParams = {
+            content = {
                 'status': setStatus,
-                'paymentTime': nowString,
-                'paymentTimeStamp': self.time_conversion(nowString, 1)
+                'sendUserId': args['opsUserId'],
+                'rcvUserId': 'summaryUser',
+                'orderTitle': args['title'],
+                'createUser': args['createUser']
             }
-
-            # 记录日志时的操作说明
+            AccountMsg.setOrderMsg(content)
+        elif setStatus == 3:
+            setParams = self.setStatus3(setStatus, nowString)
             logAction = LogDBConfig.doPaymentOrder
+            content = {
+                'status': setStatus,
+                'sendUserId': args['opsUserId'],
+                'rcvUserId': args['userId'],
+                'orderTitle': args['title'],
+                'createUser': args['createUser']
+            }
+            AccountMsg.setOrderMsg(content)
 
         DBOps.setOneDoc(
             DBCollonfig.orders,
@@ -322,6 +282,71 @@ class EditOrderStatus(BaseRequest):
         LogDBOps.writeLog(args['opsUserId'], logAction)
         self.result['result'] = {'opsTime': nowString}
         return self.response_success(msg='订单状态修改成功！')
+
+    def setStatus1(self, setStatus, args):
+        setParams = {
+            'status': setStatus,
+            'completeTime': '',
+            'paymentTime': '',
+            'completeTimeStamp': 0,
+            'paymentTimeStamp': 0,
+            'expect': {
+                'price': args['price'],
+                'tax': args['tax'],
+                'num': args['num'],
+                'unit': args['unit'],
+                'unitNum': args['unitNum'],
+                'sumPrice': round(args['sumPrice'], 2),
+            },
+            'price': args['price'],
+            'tax': args['tax'],
+            'num': args['num'],
+            'unit': args['unit'],
+            'unitNum': args['unitNum'],
+            'sumPrice': round(args['sumPrice'], 2),
+            'evaluation': 0
+        }
+
+        # 订单统计用户修改订单其他信息
+        if args.get('isCanEdit', ''):
+            setParams.update({
+                'title': args['title'],
+                'className': args['className'],
+                'customerName': args['customerName'],
+                'contactName': args['contactName'],
+                # 'department': args['department'],
+                'company': args['company'],
+                'desc': args['desc']
+            })
+
+        return setParams
+
+    def setStatus2(self, setStatus, nowString, args):
+        setParams = {
+            'status': setStatus,
+            'completeTime': nowString,
+            'paymentTime': '',
+            'completeTimeStamp': self.time_conversion(nowString, 1),
+            'paymentTimeStamp': 0,
+            'price': args['price'],
+            'tax': args['tax'],
+            'num': args['num'],
+            'unit': args['unit'],
+            'unitNum': args['unitNum'],
+            'evaluation': args['evaluation'],
+            'sumPrice': round(args['sumPrice'], 2)
+        }
+
+        return setParams
+
+    def setStatus3(self, setStatus, nowString):
+        setParams = {
+            'status': setStatus,
+            'paymentTime': nowString,
+            'paymentTimeStamp': self.time_conversion(nowString, 1)
+        }
+
+        return setParams
 
 
 class DelOrder(BaseRequest):

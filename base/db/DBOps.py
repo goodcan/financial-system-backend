@@ -60,12 +60,12 @@ class DBOps(object):
         return cls.db[table].find(params, getParams)
 
     @classmethod
-    def setOneDoc(cls, table, params, setParams):
+    def setOneDoc(cls, table, params, setParams, multi=False):
         """
             获得一个文档
         """
 
-        return cls.db[table].update(params, setParams)
+        return cls.db[table].update(params, setParams, multi=multi)
 
     @classmethod
     def getAggregate(cls, table, params):

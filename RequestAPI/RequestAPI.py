@@ -9,6 +9,7 @@ from core.account import Account
 from core.order import Order
 from core.statistics import Statistics
 from core.popover import Popover
+from base.message import Message
 from base.log import LogContent
 
 HandleList = [
@@ -44,4 +45,6 @@ HandleList = [
 
     (r'/api/getCustomerPopover', Popover.getCustomerPopover),
     (r'/api/getContactPopover', Popover.getContactPopover),
+
+    (r'/api/checkMsg', Message.CheckMsg),
 ]
