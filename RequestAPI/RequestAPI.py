@@ -47,4 +47,5 @@ HandleList = [
     (r'/api/getContactPopover', Popover.getContactPopover),
 
     (r'/api/checkMsg', Message.CheckMsg),
+    (r'/api/clearBadgeMsg', Message.ClearBadgeMsg),
 ]

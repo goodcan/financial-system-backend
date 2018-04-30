@@ -15,6 +15,34 @@ class ClearBadgeMsg(BaseRequest):
         清楚红点信息
     """
 
+    def handler_function(self):
+        args = self.get_request_data()
+
+        msg = args['clearBadgeMsg']
+
+        newMsgTimeStamp = max(msg, key=lambda x: x['sendTimeStamp'])[
+            'sendTimeStamp'
+        ]
+
+        DBOps.setOneDoc(
+            DBCollonfig.users,
+            {
+                '_id': args['userId'],
+            },
+            {
+                '$pull': {
+                    'msg': {
+                        'sendTimeStamp': {
+                            '$lte': newMsgTimeStamp
+                        }
+                    }
+                }
+            }
+        )
+
+        self.response_success()
+
+
 class CheckMsg(BaseRequest):
     """
         检测是否有新的消息
