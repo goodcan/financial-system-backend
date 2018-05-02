@@ -116,6 +116,7 @@ class DownloadTable(BaseRequest):
     """
 
     downloadPath = os.path.dirname(__file__).split('core')[0] + 'downloadData/'
+    contacts = {}
 
     def handler_download(self):
         tableType = self.get_argument('tableType')
@@ -136,7 +137,26 @@ class DownloadTable(BaseRequest):
                 {'status': 3}
             )
 
+        self.initContactsData()
         self.createToDownload(orders, filename)
+
+    def initContactsData(self):
+        """
+            初始化外包信息
+        """
+        contacts = DBOps.getOneDoc(
+            DBCollonfig.options,
+            {'_id': DBCollonfig.orderContact},
+            {'contacts': 1}
+        )['contacts']
+
+        for contact in contacts:
+            realName = contact['realName']
+            payInfo = contact['payInfo']
+            self.contacts[contact['name']] = {
+                'realName': realName if realName else u'未设置',
+                'payInfo': payInfo if payInfo else u'未设置'
+            }
 
     def createToDownload(self, orders, filename):
         """
@@ -145,6 +165,7 @@ class DownloadTable(BaseRequest):
 
         header = [u'订单ID', u'名称', u'创建时间', u'创建人',
                   u'所属公司', u'类目', u'客户', u'外包人员',
+                  u'外包真实姓名', u'外包付款信息',
                   u'预算单价', u'预算数量', u'预算总金额（￥）',
                   u'实际单价', u'实际数量', u'实际总金额（￥）',
                   u'状态（1：制作中；2：待付款；3：已付款）',
@@ -153,16 +174,24 @@ class DownloadTable(BaseRequest):
         rows = []
         for order in orders:
             status = order['status']
+            contactInfo = self.contacts.get(order['contactName'], u'该外包已删除')
+            if isinstance(contactInfo, dict):
+                contactRealName = contactInfo['realName']
+                contactPayInfo = contactInfo['payInfo']
+            else:
+                contactRealName = u'该外包已删除'
+                contactPayInfo = u'该外包已删除'
             rows.append((
                 order['orderId'],
                 order['title'].encode('gbk'),
                 order['createTime'],
                 order['createUser'].encode('gbk'),
-                # order['department'].encode('gbk'),
                 order['company'].encode('gbk'),
                 order['className'].encode('gbk'),
                 order['customerName'].encode('gbk'),
                 order['contactName'].encode('gbk'),
+                contactRealName.encode('gbk'),
+                contactPayInfo.encode('gbk'),
                 self.getUnitPrice(order, 1),
                 order['expect']['num'],
                 order['expect']['sumPrice'],
