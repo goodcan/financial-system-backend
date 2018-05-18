@@ -304,7 +304,7 @@ class EditOrderStatus(BaseRequest):
             AccountMsg.setOrderMsg(content)
 
         elif setStatus == 3:
-            setParams = self.setStatus3(setStatus, nowString)
+            setParams = self.setStatus3(setStatus, nowString, args)
             logAction = LogDBConfig.doPaymentOrder
             if args['opsUserId'] != args['userId']:
                 content = {
@@ -348,7 +348,8 @@ class EditOrderStatus(BaseRequest):
             'unit': args['unit'],
             'unitNum': args['unitNum'],
             'sumPrice': round(args['sumPrice'], 2),
-            'evaluation': 0
+            'evaluation': 0,
+            'desc': args['desc']
         }
 
         # 订单统计用户修改订单其他信息
@@ -378,16 +379,18 @@ class EditOrderStatus(BaseRequest):
             'unit': args['unit'],
             'unitNum': args['unitNum'],
             'evaluation': args['evaluation'],
-            'sumPrice': round(args['sumPrice'], 2)
+            'sumPrice': round(args['sumPrice'], 2),
+            'desc': args['desc']
         }
 
         return setParams
 
-    def setStatus3(self, setStatus, nowString):
+    def setStatus3(self, setStatus, nowString, args):
         setParams = {
             'status': setStatus,
             'paymentTime': nowString,
-            'paymentTimeStamp': TimeUtil.time_conversion(nowString, 1)
+            'paymentTimeStamp': TimeUtil.time_conversion(nowString, 1),
+            'desc': args['desc']
         }
 
         return setParams
