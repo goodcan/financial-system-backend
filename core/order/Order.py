@@ -183,15 +183,15 @@ class DownloadTable(BaseRequest):
                 contactPayInfo = u'该外包已删除'
             rows.append((
                 order['orderId'],
-                order['title'].encode('gbk'),
+                order['title'].encode('gbk', 'ignore'),
                 order['createTime'],
-                order['createUser'].encode('gbk'),
-                order['company'].encode('gbk'),
-                order['className'].encode('gbk'),
-                order['customerName'].encode('gbk'),
-                order['contactName'].encode('gbk'),
-                contactRealName.encode('gbk'),
-                contactPayInfo.encode('gbk'),
+                order['createUser'].encode('gbk', 'ignore'),
+                order['company'].encode('gbk', 'ignore'),
+                order['className'].encode('gbk', 'ignore'),
+                order['customerName'].encode('gbk', 'ignore'),
+                order['contactName'].encode('gbk', 'ignore'),
+                contactRealName.encode('gbk', 'ignore'),
+                contactPayInfo.encode('gbk', 'ignore'),
                 self.getUnitPrice(order, 1),
                 order['expect']['num'],
                 order['expect']['sumPrice'],
@@ -202,7 +202,7 @@ class DownloadTable(BaseRequest):
                 order['expectDate'],
                 order['completeTime'],
                 order['paymentTime'],
-                order['desc'].encode('gbk')
+                order['desc'].encode('gbk', 'ignore')
             ))
 
         path = self.downloadPath + filename
@@ -225,7 +225,7 @@ class DownloadTable(BaseRequest):
                   OrderConfig.Unit[order['unit']] + ' | ' + \
                   str(order['price'])
 
-        return res.encode('gbk')
+        return res.encode('gbk', 'ignore')
 
     def create_csv(self, filename, header, rows):
         """
@@ -233,7 +233,7 @@ class DownloadTable(BaseRequest):
         """
         with open(filename, 'wb') as f:
             f_csv = csv.writer(f)
-            f_csv.writerow([x.encode('gbk') for x in header])
+            f_csv.writerow([x.encode('gbk', 'ignore') for x in header])
             f_csv.writerows(rows)
 
     def download_file(self, path, filename):
