@@ -53,7 +53,7 @@ class CheckMsg(BaseRequest):
         data = DBOps.getOneDoc(
             DBCollonfig.users,
             {
-                '_id': args['userId'],
+                '_id': args.get('userId', None),
             },
             {'msg': 1}
         )

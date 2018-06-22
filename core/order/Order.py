@@ -480,7 +480,7 @@ class OrderList(BaseRequest):
             })
 
         # 订单所属公司
-        if search['company'] != 'all':
+        if search.get('company', 'all') != 'all':
             searchParams.update({
                 'company': search['company']
             })
