@@ -5,4 +5,5 @@
 # @File     : setting.py
 # @Function : 系统总的配置
 
-DATETIME_FORMATE = '%Y-%m-%d %H:%M:%S'
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+DATE_FORMAT = '%Y-%m-%d'

@@ -8,7 +8,7 @@ from datetime import datetime
 from copy import deepcopy
 
 from base.db.DBOps import DBOps
-from config.Setting import DATETIME_FORMATE
+from config.Setting import DATETIME_FORMAT
 from config.DBCollConfig import DBCollonfig
 from base.time.TimeUtil import TimeUtil
 
@@ -60,7 +60,7 @@ class AccountMsg(object):
         msg = deepcopy(cls.baseData)
         msg['sendUserId'] = content['sendUserId']
         msg['rcvUserId'] = content['rcvUserId']
-        msg['sendTime'] = datetime.now().strftime(DATETIME_FORMATE)
+        msg['sendTime'] = datetime.now().strftime(DATETIME_FORMAT)
         msg['sendTimeStamp'] = TimeUtil.time_conversion(
             msg['sendTime'], 1
         )

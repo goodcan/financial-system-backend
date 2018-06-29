@@ -8,6 +8,7 @@
 import os
 import re
 import csv
+import time
 from datetime import datetime, timedelta
 
 from RequestAPI.BaseRequest import BaseRequest
@@ -16,7 +17,7 @@ from config.DBCollConfig import DBCollonfig
 from config.OrderConfig import OrderConfig
 from base.db.LogDBOps import LogDBOps
 from config.LogDBConfig import LogDBConfig
-from config.Setting import DATETIME_FORMATE
+from config.Setting import DATETIME_FORMAT, DATE_FORMAT
 from core.account.AccountMsg import AccountMsg
 from base.time.TimeUtil import TimeUtil
 from core.order.OrderUtil import OrderUtil
@@ -119,23 +120,36 @@ class DownloadTable(BaseRequest):
     contacts = {}
 
     def handler_download(self):
+        tableData = self.get_argument('tableDate')
         tableType = self.get_argument('tableType')
 
         filename = tableType + '_' + \
                    datetime.now().strftime('%Y-%m-%d') + '.csv'
-        orders = None
-        if tableType == 'summaryAll':
-            orders = DBOps.getSomeDoc(DBCollonfig.orders, {})
-        elif tableType == 'summaryExpect':
-            orders = DBOps.getSomeDoc(
-                DBCollonfig.orders,
-                {'status': {'$in': [1, 2]}}
-            )
+
+        searchParams = {}
+
+        if tableData:
+            startDate = time.strptime(tableData, DATE_FORMAT)
+            endDateList = tableData.split('-')
+            if int(endDateList[1]) + 1 > 12:
+                endDateList[0] = '{0:02}'.format(int(endDateList[0]) + 1)
+                endDateList[1] = '01'
+            else:
+                endDateList[1] = '{0:02}'.format(int(endDateList[1]) + 1)
+            endDate = time.strptime('-'.join(endDateList), DATE_FORMAT)
+            searchParams.update({
+                'createTimeStamp': {
+                    '$gte':TimeUtil.time_conversion(startDate, 3),
+                    '$lte': TimeUtil.time_conversion(endDate, 3)
+                }
+            })
+
+        if tableType == 'summaryExpect':
+            searchParams.update({'status': {'$in': [1, 2]}})
         elif tableType == 'summaryPayment':
-            orders = DBOps.getSomeDoc(
-                DBCollonfig.orders,
-                {'status': 3}
-            )
+            searchParams.update({'status': 3})
+
+        orders = DBOps.getSomeDoc(DBCollonfig.orders, searchParams)
 
         self.initContactsData()
         self.createToDownload(orders, filename)
@@ -276,7 +290,7 @@ class EditOrderStatus(BaseRequest):
 
         logAction = None
 
-        nowString = datetime.now().strftime(DATETIME_FORMATE)
+        nowString = datetime.now().strftime(DATETIME_FORMAT)
         setParams = {}
         if setStatus == 1:
             setParams = self.setStatus1(setStatus, args)

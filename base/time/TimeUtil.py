@@ -31,3 +31,7 @@ class TimeUtil(object):
         elif option == 2:
             return time.strftime('%Y-%m-%d %H:%M:%S',
                                  time.localtime(obj * 0.001))
+
+        # datetime obj to timestamp
+        elif option == 3:
+            return int(time.mktime(obj) * 1000)
