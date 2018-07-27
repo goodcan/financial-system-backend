@@ -29,6 +29,14 @@ class BaseRequest(RequestHandler):
             self.handler_function()
         return self.write(self.result)
 
+    def on_finish(self):
+        """
+            清理全局变量
+        """
+        self.result['code'] = 0
+        self.result['msg'] = None
+        self.result['result'] = None
+
     def handler_function(self):
         """
             用于继承处理业务
