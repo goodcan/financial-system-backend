@@ -5,6 +5,8 @@
 # @File     : DBManger.py
 # @Function : 数据库连接
 
+import logging
+
 from pymongo import MongoClient
 
 
@@ -27,7 +29,7 @@ class DBManager(object):
 
         cls.db = cls.connect_db(username, password)
 
-        print 'DBManager init success'
+        logging.info('DBManager init success')
 
     @classmethod
     def connect_db(cls, username, password):

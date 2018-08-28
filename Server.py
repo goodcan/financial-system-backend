@@ -5,6 +5,8 @@
 # @File     : Server.py
 # @Function : 服务端
 
+import logging
+
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.options import define, options
@@ -18,7 +20,7 @@ define('PORT', default=9090, help='Server port')
 if __name__ == '__main__':
     options.parse_command_line()
 
-    print 'Server start to listen ' + str(options.PORT)
+    logging.info('Server start to listen ' + str(options.PORT))
 
     # 初始化基础模块
     RequestInit.init()

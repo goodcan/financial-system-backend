@@ -5,6 +5,8 @@
 # @File     : DBOps.py
 # @Function : 数据操作
 
+import logging
+
 from base.db.DBManger import DBManager
 
 
@@ -18,7 +20,7 @@ class DBOps(object):
     @classmethod
     def init(cls):
         cls.db = DBManager.db
-        print 'DBOps init success'
+        logging.info('DBOps init success')
 
     @classmethod
     def insertDoc(cls, table, doc):
