@@ -46,11 +46,11 @@ class EditUser(BaseRequest):
         args = self.get_request_data()
 
         newPermissions = {}
-        for _ in UserConfig.permissions:
-            if _ in args['setPermissions']:
-                newPermissions[_] = 1
+        for p in UserConfig.permissions:
+            if p in args['setPermissions']:
+                newPermissions[p] = 1
             else:
-                newPermissions[_] = 0
+                newPermissions[p] = 0
 
         DBOps.setOneDoc(
             DBCollonfig.users,
@@ -111,7 +111,7 @@ class EditUserInitData(BaseRequest):
         self.result['result'] = {
             'user': user,
             'companies': [
-                {'label': _['name'], 'value': _['name']} for _ in companies
+                {'label': c['name'], 'value': c['name']} for c in companies
             ],
             'permissions': [
                 {'key': k, 'label': v} for k, v in
@@ -158,7 +158,7 @@ class RegisterIinitData(BaseRequest):
 
         self.result['result'] = {
             'departments': [
-                {'label': _['name'], 'value': _['name']} for _ in departments
+                {'label': d['name'], 'value': d['name']} for d in departments
             ]
         }
 
@@ -217,7 +217,7 @@ class Register(BaseRequest):
             '_id': userId,
             'username': username,
             'password': Encrypt.password_encrypt(password),
-            'permissions': {_: 0 for _ in UserConfig.permissions},
+            'permissions': {p: 0 for p in UserConfig.permissions},
             'createTime': now,
             'createTimeStamp': TimeUtil.time_conversion(now, 1),
             'lastLogin': now,

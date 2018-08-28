@@ -139,7 +139,7 @@ class DownloadTable(BaseRequest):
             endDate = time.strptime('-'.join(endDateList), DATE_FORMAT)
             searchParams.update({
                 'createTimeStamp': {
-                    '$gte':TimeUtil.time_conversion(startDate, 3),
+                    '$gte': TimeUtil.time_conversion(startDate, 3),
                     '$lte': TimeUtil.time_conversion(endDate, 3)
                 }
             })
@@ -589,19 +589,20 @@ class OrderInitData(BaseRequest):
 
         self.result['result'] = {
             'classes': [
-                {'label': _['name'], 'value': _['name']} for _ in classes
+                {'label': cl['name'], 'value': cl['name']} for cl in classes
             ],
             'customers': [
-                {'label': _['name'], 'value': _['name']} for _ in customers
+                {'label': cu['name'], 'value': cu['name']} for cu in customers
             ],
             'contacts': [
                 {
-                    'label': _['name'] + ' | ' + _['workClass'],
-                    'value': _['name']
-                } for _ in contacts
+                    'label': con['name'] + ' | ' + con['workClass'],
+                    'value': con['name']
+                } for con in contacts
             ],
             'companies': [
-                {'label': _['name'], 'value': _['name']} for _ in companies
+                {'label': com['name'], 'value': com['name']}
+                for com in companies
             ],
             'helpInfo': helpInfo
         }
@@ -642,8 +643,8 @@ class OrderOptionInitData(BaseRequest):
         if keyName:
             try:
                 totalCustomers = [
-                    _ for _ in orderCustomers
-                    if re.match(r'.*' + keyName + '.*', _['name'])
+                    o for o in orderCustomers
+                    if re.match(r'.*' + keyName + '.*', o['name'])
                 ]
             except Exception as e:
                 totalCustomers = []
@@ -675,9 +676,9 @@ class OrderOptionInitData(BaseRequest):
         if keyName or workClass:
             try:
                 totalContacts = [
-                    _ for _ in orderContacts
-                    if re.match(r'.*' + keyName + '.*', _['name']) and \
-                       re.match(workClass, _['workClass'])
+                    o for o in orderContacts
+                    if re.match(r'.*' + keyName + '.*', o['name']) and \
+                       re.match(workClass, o['workClass'])
                 ]
             except Exception as e:
                 totalContacts = []
@@ -702,8 +703,8 @@ class OrderOptionInitData(BaseRequest):
             'totalCount': len(totalContacts),
             'pageSize': OrderConfig.optionPageSize,
             'workClasses': [
-                {'label': _['name'], 'value': _['name']}
-                for _ in workClasses
+                {'label': w['name'], 'value': w['name']}
+                for w in workClasses
             ],
         }
 
@@ -766,7 +767,7 @@ class AddOrderClass(BaseRequest):
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            msg = u','.join([err for err in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         for each in newClasses:
@@ -817,7 +818,7 @@ class AddOrderCustomer(BaseRequest):
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            msg = u','.join([err for err in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         for each in newCustomers:
@@ -870,7 +871,7 @@ class AddOrderContact(BaseRequest):
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            msg = u','.join([err for err in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         for each in newContacts:
@@ -927,7 +928,7 @@ class AddOrderDpt(BaseRequest):
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            msg = u','.join([err for err in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         for each in newDepartments:
@@ -1007,7 +1008,7 @@ class AddWorkClass(BaseRequest):
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            msg = u','.join([err for err in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         for each in newWorkClasswss:
@@ -1058,7 +1059,7 @@ class AddOrderCompany(BaseRequest):
                 error_list.append(each['name'])
 
         if error_list:
-            msg = u','.join([_ for _ in error_list]) + u'已存在'
+            msg = u','.join([err for err in error_list]) + u'已存在'
             return self.response_failure(msg=msg)
 
         for each in newCompanies:
