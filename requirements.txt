@@ -27,5 +27,5 @@ singledispatch==3.4.0.3
 six==1.11.0
 tornado==4.3
 tzlocal==1.5.1
-urllib3==1.22
+urllib3==1.26.5
 wrapt==1.10.11
